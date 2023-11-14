@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
-import { Theme, ThemePanel } from "@radix-ui/themes";
+import { Container, Theme, ThemePanel } from "@radix-ui/themes";
 import "../theme-config.css";
+import NavBar from "./components/NavBar";
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -24,8 +26,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={poppins.variable}>
-        <Theme accentColor="violet">{children}</Theme>
+      <body className={poppins.variable + " h-screen"}>
+        <Theme accentColor="violet">
+          <NavBar />
+          <Container className="h-full">
+            <Toaster />
+            {children}
+          </Container>
+        </Theme>
       </body>
     </html>
   );

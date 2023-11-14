@@ -10,11 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Student {
   id       Int    @id @default(autoincrement())
   name     String
   email    String @unique
   password String
+  grade_id Int
+  grade    Grade     @relation(fields: [grade_id], references: [id])
+  board_id Int
+  board    Board     @relation(fields: [board_id], references: [id])
+
 
   status     Boolean  @default(true)
   created_at DateTime @default(now())
@@ -24,7 +29,8 @@ model User {
 model Grade {
   id     Int     @id @default(autoincrement())
   name   String
-  boards Board[]
+  subject Subject[]
+  student Student[]
 
   status     Boolean  @default(true)
   created_at DateTime @default(now())
@@ -34,9 +40,10 @@ model Grade {
 model Board {
   id       Int       @id @default(autoincrement())
   name     String
-  grade_id Int
-  grade    Grade     @relation(fields: [grade_id], references: [id])
+  key      String
+ 
   subjects Subject[]
+  students Student[]
 
   status     Boolean  @default(true)
   created_at DateTime @default(now())
@@ -46,8 +53,11 @@ model Board {
 model Subject {
   id       Int       @id @default(autoincrement())
   name     String
+  key      String
   board_id Int
   board    Board     @relation(fields: [board_id], references: [id])
+  grade_id Int
+  grade    Grade     @relation(fields: [grade_id], references: [id])
   chapters Chapter[]
 
   status     Boolean  @default(true)
@@ -70,6 +80,8 @@ model Chapter {
 model Topic {
   id         Int     @id @default(autoincrement())
   name       String
+  video      String   @db.Text
+  pdf        String   @db.Text
   chapter_id Int
   chapter    Chapter @relation(fields: [chapter_id], references: [id])
 
