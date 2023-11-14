@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model Grade {
+  id     Int     @id @default(autoincrement())
+  name   String
+  boards Board[]
+
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model Board {
+  id       Int       @id @default(autoincrement())
+  name     String
+  grade_id Int
+  grade    Grade     @relation(fields: [grade_id], references: [id])
+  subjects Subject[]
+
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model Subject {
+  id       Int       @id @default(autoincrement())
+  name     String
+  board_id Int
+  board    Board     @relation(fields: [board_id], references: [id])
+  chapters Chapter[]
+
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model Chapter {
+  id         Int     @id @default(autoincrement())
+  name       String
+  subject_id Int
+  subject    Subject @relation(fields: [subject_id], references: [id])
+  topics     Topic[]
+
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model Topic {
+  id         Int     @id @default(autoincrement())
+  name       String
+  chapter_id Int
+  chapter    Chapter @relation(fields: [chapter_id], references: [id])
+
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
