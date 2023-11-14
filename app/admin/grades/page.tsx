@@ -1,6 +1,11 @@
 "use client";
 import StatusBadge from "@/app/components/StatusBadge";
-import { Pencil2Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
+import {
+  MagnifyingGlassIcon,
+  Pencil2Icon,
+  PlusIcon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
 import {
   Button,
   Dialog,
@@ -12,58 +17,58 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import BoardDialog from "./BoardDialog";
-import { Board } from "@prisma/client";
+import GradeDialog from "./GradeDialog";
+import { Grade } from "@prisma/client";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SearchBar from "@/app/components/SearchBar";
 
-const BoardsPage = () => {
-  const [boards, setBoards] = useState<Board[]>();
+const GradesPage = () => {
+  const [grades, setGrades] = useState<Grade[]>();
   const [searchText, setSearchText] = useState("");
 
-  const getAllBoards = async () => {
-    const res = await axios.get("/api/board", {
+  const getAllGrades = async () => {
+    const res = await axios.get("/api/grade", {
       params: {
         searchText,
       },
     });
-    setBoards(res.data.data);
+    setGrades(res.data.data);
   };
 
-  const deleteBoard = async (id: number) => {
-    const res = await axios.delete("/api/board", {
+  const deleteGrade = async (id: number) => {
+    const res = await axios.delete("/api/grade", {
       params: {
         id,
       },
     });
 
     if (res.data.status) {
-      toast.success("Board Deleted");
+      toast.success("Grade Deleted");
     }
-    getAllBoards();
+    getAllGrades();
   };
 
   useEffect(() => {
-    getAllBoards();
+    getAllGrades();
   }, [searchText]);
 
   return (
     <Flex direction={"column"} p={"9"}>
-      <Heading>Boards</Heading>
-      <Flex justify={"between"} mb={"2"} mt={"6"}>
+      <Heading mb={"6"}>Grades</Heading>
+      <Flex justify={"between"} mb={"2"}>
         <SearchBar
           placeholder={"Search For Grade"}
           searchText={searchText}
           setSearchText={setSearchText}
         />
-        <BoardDialog
-          title="Add Board"
-          boardStatus={true}
+        <GradeDialog
+          title="Add Grade"
+          gradeStatus={true}
           buttonIcon={<PlusIcon />}
           buttonText={"Add New"}
           type="new"
-          getAllBoards={getAllBoards}
+          getAllGrades={getAllGrades}
         />
       </Flex>
 
@@ -72,39 +77,36 @@ const BoardsPage = () => {
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Board Name</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Short Form</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Grade Name</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
 
         <Table.Body>
-          {boards?.map((board) => (
-            <Table.Row align={"center"} key={board.id}>
-              <Table.RowHeaderCell>{board.name}</Table.RowHeaderCell>
-              <Table.Cell>{board.key}</Table.Cell>
+          {grades?.map((grade) => (
+            <Table.Row align={"center"} key={grade.id}>
+              <Table.RowHeaderCell>{grade.name}</Table.RowHeaderCell>
               <Table.Cell>
-                <StatusBadge status={board.status} />
+                <StatusBadge status={grade.status} />
               </Table.Cell>
               <Table.Cell>
                 <Flex gap={"2"}>
-                  <BoardDialog
-                    title="Update Board"
+                  <GradeDialog
+                    title="Update Grade"
                     type="update"
                     buttonIcon={
                       <Pencil2Icon className="cursor-pointer text-slate-500" />
                     }
-                    boardStatus={board.status}
-                    boardShortForm={board.key}
-                    boardName={board.name}
-                    getAllBoards={getAllBoards}
-                    id={board.id}
-                  ></BoardDialog>
+                    gradeStatus={grade.status}
+                    gradeName={grade.name}
+                    getAllGrades={getAllGrades}
+                    id={grade.id}
+                  ></GradeDialog>
                   <Button
                     variant="soft"
                     color="red"
-                    onClick={() => deleteBoard(board.id)}
+                    onClick={() => deleteGrade(grade.id)}
                   >
                     <TrashIcon />
                   </Button>
@@ -118,4 +120,4 @@ const BoardsPage = () => {
   );
 };
 
-export default BoardsPage;
+export default GradesPage;

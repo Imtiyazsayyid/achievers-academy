@@ -14,55 +14,53 @@ export async function GET(request: NextRequest) {
     };
   }
 
-  const boards = await prisma.board.findMany({
+  const grades = await prisma.grade.findMany({
     where,
   });
 
-  return NextResponse.json({ data: boards, status: true });
+  return NextResponse.json({ data: grades, status: true });
 }
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
-  if (!body.boardName && !body.boardShortForm) {
+  if (!body.gradeName && !body.gradeShortForm) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
 
-  const newBoard = await prisma.board.create({
+  const newGrade = await prisma.grade.create({
     data: {
-      name: body.boardName,
-      key: body.boardShortForm,
-      status: body.boardStatus,
+      name: body.gradeName,
+      status: body.gradeStatus,
     },
   });
 
-  return NextResponse.json({ data: newBoard, status: true });
+  return NextResponse.json({ data: newGrade, status: true });
 }
 
 export async function PUT(request: NextRequest) {
   const body = await request.json();
 
   if (
-    !body.boardName &&
-    !body.boardShortForm &&
-    !body.boardStatus &&
-    !body.boardId
+    !body.gradeName &&
+    !body.gradeShortForm &&
+    !body.gradeStatus &&
+    !body.gradeId
   ) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
 
-  const updatedBoard = await prisma.board.update({
+  const updatedGrade = await prisma.grade.update({
     data: {
-      name: body.boardName,
-      key: body.boardShortForm,
-      status: body.boardStatus,
+      name: body.gradeName,
+      status: body.gradeStatus,
     },
     where: {
-      id: parseInt(body.boardId),
+      id: parseInt(body.gradeId),
     },
   });
 
-  return NextResponse.json({ data: updatedBoard, status: true });
+  return NextResponse.json({ data: updatedGrade, status: true });
 }
 
 export async function DELETE(request: NextRequest) {
@@ -70,11 +68,11 @@ export async function DELETE(request: NextRequest) {
   if (!id) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
-  const deletedBoard = await prisma.board.delete({
+  const deletedGrade = await prisma.grade.delete({
     where: {
       id: parseInt(id),
     },
   });
 
-  return NextResponse.json({ data: deletedBoard, status: true });
+  return NextResponse.json({ data: deletedGrade, status: true });
 }
