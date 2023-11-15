@@ -18,65 +18,68 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import SubjectDialog from "./SubjectDialog";
-import { Board, Grade, Subject } from "@prisma/client";
+import ChapterDialog from "./ChapterDialog";
+import { Board, Grade, Chapter } from "@prisma/client";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SearchBar from "@/app/components/SearchBar";
 import { useRouter } from "next/navigation";
 
-type DetailedSubject = Subject & {
-  grade: Grade;
-  board: Board;
-};
+interface Props {
+  params: {
+    id: string;
+  };
+}
 
-const SubjectsPage = () => {
-  const [subjects, setSubjects] = useState<DetailedSubject[]>();
+const ChaptersPage = ({ params }: Props) => {
+  const [chapters, setChapters] = useState<Chapter[]>();
   const [searchText, setSearchText] = useState("");
   const router = useRouter();
 
-  const getAllSubjects = async () => {
-    const res = await axios.get("/api/subject", {
+  const getAllChapters = async () => {
+    const res = await axios.get("/api/chapter", {
       params: {
         searchText,
+        subjectId: params.id,
       },
     });
-    setSubjects(res.data.data);
+    setChapters(res.data.data);
   };
 
-  const deleteSubject = async (id: number) => {
-    const res = await axios.delete("/api/subject", {
+  const deleteChapter = async (id: number) => {
+    const res = await axios.delete("/api/chapter", {
       params: {
         id,
       },
     });
 
     if (res.data.status) {
-      toast.success("Subject Deleted");
+      toast.success("Chapter Deleted");
     }
-    getAllSubjects();
+    getAllChapters();
   };
 
   useEffect(() => {
-    getAllSubjects();
+    getAllChapters();
   }, [searchText]);
 
   return (
     <Flex direction={"column"} p={"9"}>
-      <Heading>Subjects</Heading>
+      <Heading>Chapters</Heading>
       <Flex justify={"between"} mb={"2"} mt={"6"}>
         <SearchBar
-          placeholder={"Search For Subject"}
+          placeholder={"Search For Chapter"}
           searchText={searchText}
           setSearchText={setSearchText}
         />
-        <SubjectDialog
-          title="Add Subject"
-          subjectStatus={true}
+        <ChapterDialog
+          title="Add Chapter"
+          chapterStatus={true}
           buttonIcon={<PlusIcon />}
           buttonText={"Add New"}
           type="new"
-          getAllSubjects={getAllSubjects}
+          getAllChapters={getAllChapters}
+          subjectId={params.id}
         />
       </Flex>
 
@@ -85,52 +88,44 @@ const SubjectsPage = () => {
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Subject Name</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Short Form</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Grade</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Board</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Chapter Name</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
 
         <Table.Body>
-          {subjects?.map((subject) => (
-            <Table.Row align={"center"} key={subject.id}>
-              <Table.RowHeaderCell>{subject.name}</Table.RowHeaderCell>
-              <Table.Cell>{subject.key}</Table.Cell>
-              <Table.Cell>{subject.grade.name}</Table.Cell>
-              <Table.Cell>{subject.board.key}</Table.Cell>
+          {chapters?.map((chapter) => (
+            <Table.Row align={"center"} key={chapter.id}>
+              <Table.RowHeaderCell>{chapter.name}</Table.RowHeaderCell>
               <Table.Cell>
-                <StatusBadge status={subject.status} />
+                <StatusBadge status={chapter.status} />
               </Table.Cell>
               <Table.Cell>
                 <Flex gap={"2"}>
-                  <SubjectDialog
-                    title="Update Subject"
+                  <ChapterDialog
+                    title="Update Chapter"
                     type="update"
                     buttonIcon={
                       <Pencil2Icon className="cursor-pointer text-slate-500" />
                     }
-                    subjectStatus={subject.status}
-                    subjectShortForm={subject.key}
-                    subjectName={subject.name}
-                    getAllSubjects={getAllSubjects}
-                    gradeId={subject.grade_id}
-                    boardId={subject.board_id}
-                    id={subject.id}
-                  ></SubjectDialog>
+                    chapterStatus={chapter.status}
+                    chapterName={chapter.name}
+                    getAllChapters={getAllChapters}
+                    id={chapter.id}
+                    subjectId={params.id}
+                  ></ChapterDialog>
                   <Button
                     variant="soft"
                     color="red"
-                    onClick={() => deleteSubject(subject.id)}
+                    onClick={() => deleteChapter(chapter.id)}
                   >
                     <TrashIcon />
                   </Button>
                   <Button
                     variant="soft"
                     color="blue"
-                    onClick={() => router.push(`/admin/subjects/${subject.id}`)}
+                    onClick={() => router.push(`/admin/chapters/${chapter.id}`)}
                   >
                     <ArrowRightIcon />
                   </Button>
@@ -138,7 +133,7 @@ const SubjectsPage = () => {
               </Table.Cell>
             </Table.Row>
           ))}
-          {subjects?.length == 0 && (
+          {chapters?.length == 0 && (
             <Table.Row>
               <Table.Cell>No Results Found.</Table.Cell>
             </Table.Row>
@@ -149,4 +144,4 @@ const SubjectsPage = () => {
   );
 };
 
-export default SubjectsPage;
+export default ChaptersPage;

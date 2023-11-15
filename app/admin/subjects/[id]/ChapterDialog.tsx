@@ -1,0 +1,157 @@
+"use client";
+import { Board, Grade } from "@prisma/client";
+import {
+  Button,
+  Dialog,
+  Flex,
+  Switch,
+  TextField,
+  Text,
+  Select,
+} from "@radix-ui/themes";
+import axios from "axios";
+import React, { ReactNode, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
+interface Props {
+  id?: number;
+  type: "new" | "update";
+  buttonText?: string;
+  title: string;
+  chapterName?: string;
+  buttonIcon?: ReactNode;
+  chapterStatus?: boolean;
+  subjectId: string;
+  getAllChapters: () => void;
+}
+
+const ChapterDialog = ({
+  id,
+  type,
+  buttonText,
+  title,
+  chapterName,
+  chapterStatus,
+  buttonIcon,
+  subjectId,
+  getAllChapters,
+}: Props) => {
+  const [chapterDetails, setChapterDetails] = useState({
+    chapterName: chapterName,
+    chapterStatus: chapterStatus,
+    subjectId: subjectId,
+  });
+
+  async function addNewChapter() {
+    console.log(chapterDetails.subjectId);
+
+    const res = await axios.post("/api/chapter", {
+      chapterName: chapterDetails.chapterName,
+      chapterStatus: chapterDetails.chapterStatus,
+      subjectId: chapterDetails.subjectId,
+    });
+
+    clearForm();
+    getAllChapters();
+
+    if (res.data.status) {
+      toast.success("Chapter Added");
+    }
+  }
+  async function updateChapter() {
+    let body = {
+      chapterId: id,
+      subjectId: chapterDetails.subjectId,
+      chapterName: chapterDetails.chapterName,
+      chapterStatus: chapterDetails.chapterStatus,
+    };
+
+    console.log(body);
+
+    const res = await axios.put("/api/chapter", body);
+    if (res.data.status) {
+      toast.success("Chapter Updated");
+    }
+
+    getAllChapters();
+  }
+
+  const handleSubmit = () => {
+    if (type === "new") {
+      addNewChapter();
+    }
+    if (type === "update") {
+      updateChapter();
+    }
+  };
+
+  const clearForm = () => {
+    setChapterDetails({
+      chapterName: "",
+      chapterStatus: true,
+      subjectId: "",
+    });
+  };
+
+  return (
+    <div>
+      <Dialog.Root>
+        <Dialog.Trigger>
+          <Button size={"2"} variant="soft">
+            {buttonIcon}
+            {buttonText}
+          </Button>
+        </Dialog.Trigger>
+
+        <Dialog.Content style={{ maxWidth: 450 }}>
+          <Dialog.Title>{title}</Dialog.Title>
+
+          <Flex direction="column" gap="3">
+            <label>
+              <TextField.Input
+                defaultValue={chapterDetails.chapterName}
+                placeholder="Enter Chapter Name"
+                onChange={(e) =>
+                  setChapterDetails({
+                    ...chapterDetails,
+                    chapterName: e.target.value,
+                  })
+                }
+              />
+            </label>
+
+            <label>
+              <Flex gap="2" className="border w-fit p-2 shadow-sm rounded-md">
+                <Text size={"2"}>Status</Text>{" "}
+                <Switch
+                  checked={chapterDetails.chapterStatus}
+                  variant="soft"
+                  color="green"
+                  onCheckedChange={(value) =>
+                    setChapterDetails({
+                      ...chapterDetails,
+                      chapterStatus: value,
+                    })
+                  }
+                />
+              </Flex>
+            </label>
+          </Flex>
+
+          <Flex gap="3" mt="4" justify="end">
+            <Dialog.Close>
+              <Button variant="soft" color="gray">
+                Cancel
+              </Button>
+            </Dialog.Close>
+            <Dialog.Close>
+              <Button onClick={handleSubmit}>Save</Button>
+            </Dialog.Close>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
+    </div>
+  );
+};
+
+export default ChapterDialog;
