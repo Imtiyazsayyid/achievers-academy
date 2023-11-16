@@ -16,10 +16,9 @@ model Student {
   email    String @unique
   password String
   grade_id Int
-  grade    Grade     @relation(fields: [grade_id], references: [id])
+  grade    Grade  @relation(fields: [grade_id], references: [id])
   board_id Int
-  board    Board     @relation(fields: [board_id], references: [id])
-
+  board    Board  @relation(fields: [board_id], references: [id])
 
   status     Boolean  @default(true)
   created_at DateTime @default(now())
@@ -27,8 +26,8 @@ model Student {
 }
 
 model Grade {
-  id     Int     @id @default(autoincrement())
-  name   String
+  id      Int       @id @default(autoincrement())
+  name    String
   subject Subject[]
   student Student[]
 
@@ -38,10 +37,10 @@ model Grade {
 }
 
 model Board {
-  id       Int       @id @default(autoincrement())
-  name     String
-  key      String
- 
+  id   Int    @id @default(autoincrement())
+  name String
+  key  String
+
   subjects Subject[]
   students Student[]
 
@@ -78,14 +77,49 @@ model Chapter {
 }
 
 model Topic {
-  id         Int     @id @default(autoincrement())
-  name       String
-  video      String   @db.Text
-  pdf        String   @db.Text
-  chapter_id Int
-  chapter    Chapter @relation(fields: [chapter_id], references: [id])
+  id             Int            @id @default(autoincrement())
+  name           String
+  description    String?        @db.Text
+  video          String?        @db.Text
+  pdf            String?        @db.Text
+  chapter_id     Int
+  chapter        Chapter        @relation(fields: [chapter_id], references: [id])
+  quiz_questions QuizQuestion[]
 
   status     Boolean  @default(true)
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+}
+
+model QuizQuestion {
+  id       Int                   @id @default(autoincrement())
+  question String
+  topic_id Int
+  topic    Topic                 @relation(fields: [topic_id], references: [id])
+  correctOption Int?
+
+  type     QuizQuestionType      
+  options  QuizQuestionOption[]
+
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model QuizQuestionOption {
+  id               Int          @id @default(autoincrement())
+  text             String
+  option_number    Int
+  quiz_question_id Int
+  quiz_question    QuizQuestion @relation(fields: [quiz_question_id], references: [id])
+
+
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+enum QuizQuestionType {
+  MULTIPLE_CHOICE
+  LONG_ANSWER
 }

@@ -17,6 +17,8 @@ import { Board } from "@prisma/client";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SearchBar from "@/app/components/SearchBar";
+import GoBack from "@/app/components/GoBack";
+import DeleteConfirmation from "@/app/components/DeleteConfirmation";
 
 const BoardsPage = () => {
   const [boards, setBoards] = useState<Board[]>();
@@ -32,16 +34,20 @@ const BoardsPage = () => {
   };
 
   const deleteBoard = async (id: number) => {
-    const res = await axios.delete("/api/board", {
-      params: {
-        id,
-      },
-    });
+    try {
+      const res = await axios.delete("/api/board", {
+        params: {
+          id,
+        },
+      });
 
-    if (res.data.status) {
-      toast.success("Board Deleted");
+      if (res.data.status) {
+        toast.success("Board Deleted");
+      }
+      getAllBoards();
+    } catch (error) {
+      toast.error("Some Items are still using this.");
     }
-    getAllBoards();
   };
 
   useEffect(() => {
@@ -49,71 +55,85 @@ const BoardsPage = () => {
   }, [searchText]);
 
   return (
-    <Flex direction={"column"} p={"9"}>
-      <Heading>Boards</Heading>
-      <Flex justify={"between"} mb={"2"} mt={"6"}>
-        <SearchBar
-          placeholder={"Search For Grade"}
-          searchText={searchText}
-          setSearchText={setSearchText}
-        />
-        <BoardDialog
-          title="Add Board"
-          boardStatus={true}
-          buttonIcon={<PlusIcon />}
-          buttonText={"Add New"}
-          type="new"
-          getAllBoards={getAllBoards}
-        />
-      </Flex>
+    <Flex className="h-[90vh] w-full">
+      <Flex
+        direction={"column"}
+        m={"9"}
+        p="5"
+        px="8"
+        className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
+      >
+        <GoBack />
+        <Heading mt={"5"}>Boards</Heading>
+        <Flex justify={"between"} mb={"2"} mt={"6"}>
+          <SearchBar
+            placeholder={"Search For Grade"}
+            searchText={searchText}
+            setSearchText={setSearchText}
+          />
+          <BoardDialog
+            title="Add Board"
+            boardStatus={true}
+            buttonIcon={<PlusIcon />}
+            buttonText={"Add New"}
+            type="new"
+            getAllBoards={getAllBoards}
+          />
+        </Flex>
 
-      {/* Table */}
+        {/* Table */}
 
-      <Table.Root variant="surface">
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeaderCell>Board Name</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Short Form</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
-          </Table.Row>
-        </Table.Header>
-
-        <Table.Body>
-          {boards?.map((board) => (
-            <Table.Row align={"center"} key={board.id}>
-              <Table.RowHeaderCell>{board.name}</Table.RowHeaderCell>
-              <Table.Cell>{board.key}</Table.Cell>
-              <Table.Cell>
-                <StatusBadge status={board.status} />
-              </Table.Cell>
-              <Table.Cell>
-                <Flex gap={"2"}>
-                  <BoardDialog
-                    title="Update Board"
-                    type="update"
-                    buttonIcon={
-                      <Pencil2Icon className="cursor-pointer text-slate-500" />
-                    }
-                    boardStatus={board.status}
-                    boardShortForm={board.key}
-                    boardName={board.name}
-                    getAllBoards={getAllBoards}
-                    id={board.id}
-                  ></BoardDialog>
-                  <Button
-                    variant="soft"
-                    color="red"
-                    onClick={() => deleteBoard(board.id)}
-                  >
-                    <TrashIcon />
-                  </Button>
-                </Flex>
-              </Table.Cell>
+        <Table.Root variant="surface">
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeaderCell>Board Name</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Short Form</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
             </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
+          </Table.Header>
+
+          <Table.Body>
+            {boards?.map((board) => (
+              <Table.Row align={"center"} key={board.id}>
+                <Table.RowHeaderCell>{board.name}</Table.RowHeaderCell>
+                <Table.Cell>{board.key}</Table.Cell>
+                <Table.Cell>
+                  <StatusBadge status={board.status} />
+                </Table.Cell>
+                <Table.Cell>
+                  <Flex gap={"2"}>
+                    <BoardDialog
+                      title="Update Board"
+                      type="update"
+                      buttonIcon={
+                        <Pencil2Icon className="cursor-pointer text-slate-500" />
+                      }
+                      boardStatus={board.status}
+                      boardShortForm={board.key}
+                      boardName={board.name}
+                      getAllBoards={getAllBoards}
+                      id={board.id}
+                    ></BoardDialog>
+                    {/* <Button
+                      variant="soft"
+                      color="red"
+                      onClick={() => deleteBoard(board.id)}
+                    >
+                      <TrashIcon />
+                    </Button> */}
+                    <DeleteConfirmation
+                      itemToBeDeletedName={board.name}
+                      itemToBeDeletedType="Board"
+                      confirmDelete={() => deleteBoard(board.id)}
+                    />
+                  </Flex>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </Flex>
     </Flex>
   );
 };

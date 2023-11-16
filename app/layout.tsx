@@ -6,6 +6,7 @@ import { Container, Theme, ThemePanel } from "@radix-ui/themes";
 import "../theme-config.css";
 import NavBar from "./components/NavBar";
 import { Toaster } from "react-hot-toast";
+import GoBack from "./components/GoBack";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -29,10 +30,12 @@ export default function RootLayout({
       <body className={poppins.variable + " h-screen"}>
         <Theme accentColor="violet">
           <NavBar />
-          <Container className="h-full">
-            <Toaster />
-            {children}
-          </Container>
+          <main className="bg-slate-100 h-screen">
+            <Container className="h-full">
+              <Toaster />
+              {children}
+            </Container>
+          </main>
         </Theme>
       </body>
     </html>

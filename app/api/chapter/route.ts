@@ -72,6 +72,7 @@ export async function DELETE(request: NextRequest) {
   if (!id) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
+
   const deletedChapter = await prisma.chapter.delete({
     where: {
       id: parseInt(id),

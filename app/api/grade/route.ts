@@ -68,6 +68,7 @@ export async function DELETE(request: NextRequest) {
   if (!id) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
+
   const deletedGrade = await prisma.grade.delete({
     where: {
       id: parseInt(id),

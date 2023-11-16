@@ -22,6 +22,8 @@ import { Grade } from "@prisma/client";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SearchBar from "@/app/components/SearchBar";
+import GoBack from "@/app/components/GoBack";
+import DeleteConfirmation from "@/app/components/DeleteConfirmation";
 
 const GradesPage = () => {
   const [grades, setGrades] = useState<Grade[]>();
@@ -37,16 +39,20 @@ const GradesPage = () => {
   };
 
   const deleteGrade = async (id: number) => {
-    const res = await axios.delete("/api/grade", {
-      params: {
-        id,
-      },
-    });
+    try {
+      const res = await axios.delete("/api/grade", {
+        params: {
+          id,
+        },
+      });
 
-    if (res.data.status) {
-      toast.success("Grade Deleted");
+      if (res.data.status) {
+        toast.success("Grade Deleted");
+      }
+      getAllGrades();
+    } catch (error) {
+      toast.error("Some Items are still using this.");
     }
-    getAllGrades();
   };
 
   useEffect(() => {
@@ -54,68 +60,84 @@ const GradesPage = () => {
   }, [searchText]);
 
   return (
-    <Flex direction={"column"} p={"9"}>
-      <Heading mb={"6"}>Grades</Heading>
-      <Flex justify={"between"} mb={"2"}>
-        <SearchBar
-          placeholder={"Search For Grade"}
-          searchText={searchText}
-          setSearchText={setSearchText}
-        />
-        <GradeDialog
-          title="Add Grade"
-          gradeStatus={true}
-          buttonIcon={<PlusIcon />}
-          buttonText={"Add New"}
-          type="new"
-          getAllGrades={getAllGrades}
-        />
-      </Flex>
+    <Flex className="h-[90vh] w-full">
+      <Flex
+        direction={"column"}
+        m={"9"}
+        p="5"
+        px="8"
+        className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
+      >
+        <GoBack />
+        <Heading mb={"6"} mt="5">
+          Grades
+        </Heading>
+        <Flex justify={"between"} mb={"2"}>
+          <SearchBar
+            placeholder={"Search For Grade"}
+            searchText={searchText}
+            setSearchText={setSearchText}
+          />
+          <GradeDialog
+            title="Add Grade"
+            gradeStatus={true}
+            buttonIcon={<PlusIcon />}
+            buttonText={"Add New"}
+            type="new"
+            getAllGrades={getAllGrades}
+          />
+        </Flex>
 
-      {/* Table */}
+        {/* Table */}
 
-      <Table.Root variant="surface">
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeaderCell>Grade Name</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
-          </Table.Row>
-        </Table.Header>
-
-        <Table.Body>
-          {grades?.map((grade) => (
-            <Table.Row align={"center"} key={grade.id}>
-              <Table.RowHeaderCell>{grade.name}</Table.RowHeaderCell>
-              <Table.Cell>
-                <StatusBadge status={grade.status} />
-              </Table.Cell>
-              <Table.Cell>
-                <Flex gap={"2"}>
-                  <GradeDialog
-                    title="Update Grade"
-                    type="update"
-                    buttonIcon={
-                      <Pencil2Icon className="cursor-pointer text-slate-500" />
-                    }
-                    gradeStatus={grade.status}
-                    gradeName={grade.name}
-                    getAllGrades={getAllGrades}
-                    id={grade.id}
-                  ></GradeDialog>
-                  <Button
-                    variant="soft"
-                    color="red"
-                    onClick={() => deleteGrade(grade.id)}
-                  >
-                    <TrashIcon />
-                  </Button>
-                </Flex>
-              </Table.Cell>
+        <Table.Root variant="surface">
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeaderCell>Grade Name</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
             </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
+          </Table.Header>
+
+          <Table.Body>
+            {grades?.map((grade) => (
+              <Table.Row align={"center"} key={grade.id}>
+                <Table.RowHeaderCell>{grade.name}</Table.RowHeaderCell>
+                <Table.Cell>
+                  <StatusBadge status={grade.status} />
+                </Table.Cell>
+                <Table.Cell>
+                  <Flex gap={"2"}>
+                    <GradeDialog
+                      title="Update Grade"
+                      type="update"
+                      buttonIcon={
+                        <Pencil2Icon className="cursor-pointer text-slate-500" />
+                      }
+                      gradeStatus={grade.status}
+                      gradeName={grade.name}
+                      getAllGrades={getAllGrades}
+                      id={grade.id}
+                    ></GradeDialog>
+                    {/* <Button
+                      variant="soft"
+                      color="red"
+                      onClick={() => deleteGrade(grade.id)}
+                    >
+                      <TrashIcon />
+                    </Button> */}
+                    <DeleteConfirmation
+                      itemToBeDeletedName={grade.name}
+                      itemToBeDeletedType="Grade"
+                      confirmDelete={() => deleteGrade(grade.id)}
+                    />
+                  </Flex>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </Flex>
     </Flex>
   );
 };

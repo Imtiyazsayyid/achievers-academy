@@ -70,6 +70,7 @@ export async function DELETE(request: NextRequest) {
   if (!id) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
+
   const deletedBoard = await prisma.board.delete({
     where: {
       id: parseInt(id),
