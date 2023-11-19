@@ -23,7 +23,7 @@ const DeleteConfirmation = ({
       <AlertDialog.Content style={{ maxWidth: 450 }}>
         <AlertDialog.Title>Delete {itemToBeDeletedType}</AlertDialog.Title>
         <AlertDialog.Description size="2">
-          Are you sure you want to delete {itemToBeDeletedName}
+          Are you sure you want to remove {itemToBeDeletedName}
         </AlertDialog.Description>
 
         <Flex gap="3" mt="4" justify="end">

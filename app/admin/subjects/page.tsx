@@ -129,6 +129,7 @@ const SubjectsPage = () => {
                       subjectStatus={subject.status}
                       subjectShortForm={subject.key}
                       subjectName={subject.name}
+                      subjectImage={subject.img}
                       getAllSubjects={getAllSubjects}
                       gradeId={subject.grade_id}
                       boardId={subject.board_id}

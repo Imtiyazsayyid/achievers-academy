@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
       name: body.subjectName,
       key: body.subjectShortForm,
       status: body.subjectStatus,
+      img: body.subjectImage,
       grade_id: parseInt(body.gradeId),
       board_id: parseInt(body.boardId),
     },
@@ -53,19 +54,19 @@ export async function PUT(request: NextRequest) {
     !body.subjectShortForm &&
     !body.subjectStatus &&
     !body.subjectId &&
+    !body.subjectImage &&
     !body.gradeId &&
     !body.boardId
   ) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
 
-  console.log({ body });
-
   const updatedSubject = await prisma.subject.update({
     data: {
       name: body.subjectName,
       key: body.subjectShortForm,
       status: body.subjectStatus,
+      img: body.subjectImage,
       grade_id: parseInt(body.gradeId),
       board_id: parseInt(body.boardId),
     },

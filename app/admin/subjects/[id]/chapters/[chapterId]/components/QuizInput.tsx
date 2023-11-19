@@ -1,6 +1,13 @@
 import { QuizQuestion, QuizQuestionOption } from "@prisma/client";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { Button, Flex, Select, Text, TextField } from "@radix-ui/themes";
+import {
+  Button,
+  Flex,
+  Select,
+  Text,
+  TextArea,
+  TextField,
+} from "@radix-ui/themes";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -28,6 +35,7 @@ const QuizInput = ({ topicId }: Props) => {
         { id: 4, text: "" },
       ],
       correctOption: 1,
+      correctAnswer: "",
     },
   ]);
 
@@ -60,6 +68,7 @@ const QuizInput = ({ topicId }: Props) => {
                   { id: 4, text: "" },
                 ],
           correctOption: question.correctOption,
+          correctAnswer: question.correctAnswer,
         };
       }
     );
@@ -85,6 +94,7 @@ const QuizInput = ({ topicId }: Props) => {
           { id: 4, text: "" },
         ],
         correctOption: 1,
+        correctAnswer: "",
       },
     ]);
   };
@@ -98,6 +108,7 @@ const QuizInput = ({ topicId }: Props) => {
           type: value,
           options: question.options,
           correctOption: question.correctOption,
+          correctAnswer: question.correctAnswer,
         };
       }
       return question;
@@ -115,6 +126,25 @@ const QuizInput = ({ topicId }: Props) => {
           type: question.type,
           options: question.options,
           correctOption: parseInt(value),
+          correctAnswer: question.correctAnswer,
+        };
+      }
+      return question;
+    });
+
+    setQuestions(filteredQuestions);
+  };
+
+  const changeQuestionCorrectAnswer = (value: string, id: number) => {
+    const filteredQuestions = questions.map((question) => {
+      if (question.id == id) {
+        return {
+          id,
+          question: question.question,
+          type: question.type,
+          options: question.options,
+          correctOption: question.correctOption,
+          correctAnswer: value,
         };
       }
       return question;
@@ -132,6 +162,7 @@ const QuizInput = ({ topicId }: Props) => {
           type: question.type,
           options: question.options,
           correctOption: question.correctOption,
+          correctAnswer: question.correctAnswer,
         };
       }
       return question;
@@ -168,7 +199,6 @@ const QuizInput = ({ topicId }: Props) => {
       return question;
     });
 
-    console.log(filteredQuestions);
     setQuestions(filteredQuestions);
   };
 
@@ -284,6 +314,17 @@ const QuizInput = ({ topicId }: Props) => {
                   </Select.Content>
                 </Select.Root>
               </Flex>
+            </Flex>
+          )}
+          {question.type == "LONG_ANSWER" && (
+            <Flex mr={"2"}>
+              <TextArea
+                className="w-3/4 h-40"
+                onChange={(e) =>
+                  changeQuestionCorrectAnswer(e.target.value, question.id)
+                }
+                defaultValue={question.correctAnswer}
+              />
             </Flex>
           )}
         </Flex>

@@ -128,6 +128,7 @@ const ChaptersPage = ({ params }: Props) => {
                       getAllChapters={getAllChapters}
                       id={chapter.id}
                       subjectId={params.id}
+                      chapterNumber={chapter.chapter_number || undefined}
                     ></ChapterDialog>
                     {/* <Button
                       variant="soft"

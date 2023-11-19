@@ -4,7 +4,7 @@ import "./globals.css";
 import "@radix-ui/themes/styles.css";
 import { Container, Theme, ThemePanel } from "@radix-ui/themes";
 import "../theme-config.css";
-import NavBar from "./components/NavBar";
+import NavBar from "./admin/NavBar";
 import { Toaster } from "react-hot-toast";
 import GoBack from "./components/GoBack";
 
@@ -27,14 +27,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={poppins.variable + " h-screen"}>
+      <body className={poppins.variable + " min-h-screen"}>
         <Theme accentColor="violet">
-          <NavBar />
-          <main className="bg-slate-100 h-screen">
-            <Container className="h-full">
-              <Toaster />
-              {children}
-            </Container>
+          <main className="bg-slate-100 min-h-screen">
+            <Toaster />
+            {children}
           </main>
         </Theme>
       </body>

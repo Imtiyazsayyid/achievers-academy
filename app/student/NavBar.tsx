@@ -3,15 +3,11 @@ import Link from "next/link";
 import React from "react";
 import { GiPirateHook } from "react-icons/gi";
 
-const Links = [
-  { label: "Boards", link: "/admin/boards" },
-  { label: "Grades", link: "/admin/grades" },
-  { label: "Subjects", link: "/admin/subjects" },
-];
+const Links = [{ label: "Subjects", link: "/students/subjects" }];
 
 const NavBar = () => {
   return (
-    <Flex className="h-14 border-b">
+    <Flex className="h-14 border-b bg-white">
       <Container>
         <Flex className="h-14 border-b">
           <Flex className="w-1/5" align={"center"} justify={"center"}></Flex>

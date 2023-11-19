@@ -21,6 +21,7 @@ interface Props {
   gradeId?: number;
   boardId?: number;
   subjectName?: string;
+  subjectImage?: string;
   buttonIcon?: ReactNode;
   subjectShortForm?: string;
   subjectStatus?: boolean;
@@ -38,12 +39,14 @@ const SubjectDialog = ({
   boardId,
   subjectStatus,
   buttonIcon,
+  subjectImage,
   getAllSubjects,
 }: Props) => {
   const [subjectDetails, setSubjectDetails] = useState({
     subjectName: subjectName,
     subjectShortForm: subjectShortForm,
     subjectStatus: subjectStatus,
+    subjectImage: subjectImage,
     gradeId: gradeId ? gradeId.toString() : "",
     boardId: boardId ? boardId.toString() : "",
   });
@@ -53,6 +56,7 @@ const SubjectDialog = ({
       subjectName: subjectDetails.subjectName,
       subjectShortForm: subjectDetails.subjectShortForm,
       subjectStatus: subjectDetails.subjectStatus,
+      subjectImage: subjectDetails.subjectImage,
       gradeId: subjectDetails.gradeId,
       boardId: subjectDetails.boardId,
     });
@@ -71,11 +75,10 @@ const SubjectDialog = ({
       subjectName: subjectDetails.subjectName,
       subjectShortForm: subjectDetails.subjectShortForm,
       subjectStatus: subjectDetails.subjectStatus,
+      subjectImage: subjectDetails.subjectImage,
       gradeId: subjectDetails.gradeId,
       boardId: subjectDetails.boardId,
     };
-
-    console.log(body);
 
     const res = await axios.put("/api/subject", body);
     if (res.data.status) {
@@ -99,6 +102,7 @@ const SubjectDialog = ({
       subjectName: "",
       subjectShortForm: "",
       subjectStatus: true,
+      subjectImage: "",
       gradeId: "",
       boardId: "",
     });
@@ -156,6 +160,18 @@ const SubjectDialog = ({
                   setSubjectDetails({
                     ...subjectDetails,
                     subjectShortForm: e.target.value,
+                  })
+                }
+              />
+            </label>
+            <label>
+              <TextField.Input
+                defaultValue={subjectDetails.subjectImage}
+                placeholder="Enter Subject Image"
+                onChange={(e) =>
+                  setSubjectDetails({
+                    ...subjectDetails,
+                    subjectImage: e.target.value,
                   })
                 }
               />

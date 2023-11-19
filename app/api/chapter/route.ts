@@ -19,9 +19,15 @@ export async function GET(request: NextRequest) {
   }
 
   const chapters = await prisma.chapter.findMany({
+    include: {
+      topics: true,
+    },
     where: {
       subject_id: parseInt(subjectId),
       ...where,
+    },
+    orderBy: {
+      chapter_number: "asc",
     },
   });
 
@@ -40,6 +46,7 @@ export async function POST(request: NextRequest) {
       name: body.chapterName,
       status: body.chapterStatus,
       subject_id: parseInt(body.subjectId),
+      chapter_number: parseInt(body.chapterNumber),
     },
   });
 
@@ -58,6 +65,7 @@ export async function PUT(request: NextRequest) {
       name: body.chapterName,
       status: body.chapterStatus,
       subject_id: parseInt(body.subjectId),
+      chapter_number: parseInt(body.chapterNumber),
     },
     where: {
       id: parseInt(body.chapterId),

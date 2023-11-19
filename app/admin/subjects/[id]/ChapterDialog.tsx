@@ -21,6 +21,7 @@ interface Props {
   chapterName?: string;
   buttonIcon?: ReactNode;
   chapterStatus?: boolean;
+  chapterNumber?: number;
   subjectId: string;
   getAllChapters: () => void;
 }
@@ -34,12 +35,14 @@ const ChapterDialog = ({
   chapterStatus,
   buttonIcon,
   subjectId,
+  chapterNumber,
   getAllChapters,
 }: Props) => {
   const [chapterDetails, setChapterDetails] = useState({
     chapterName: chapterName,
     chapterStatus: chapterStatus,
     subjectId: subjectId,
+    chapterNumber: chapterNumber,
   });
 
   async function addNewChapter() {
@@ -49,6 +52,7 @@ const ChapterDialog = ({
       chapterName: chapterDetails.chapterName,
       chapterStatus: chapterDetails.chapterStatus,
       subjectId: chapterDetails.subjectId,
+      chapterNumber: chapterDetails.chapterNumber,
     });
 
     clearForm();
@@ -64,6 +68,7 @@ const ChapterDialog = ({
       subjectId: chapterDetails.subjectId,
       chapterName: chapterDetails.chapterName,
       chapterStatus: chapterDetails.chapterStatus,
+      chapterNumber: chapterDetails.chapterNumber,
     };
 
     console.log(body);
@@ -89,7 +94,8 @@ const ChapterDialog = ({
     setChapterDetails({
       chapterName: "",
       chapterStatus: true,
-      subjectId: "",
+      subjectId: subjectId,
+      chapterNumber: chapterDetails.chapterNumber,
     });
   };
 
@@ -120,22 +126,41 @@ const ChapterDialog = ({
               />
             </label>
 
-            <label>
-              <Flex gap="2" className="border w-fit p-2 shadow-sm rounded-md">
-                <Text size={"2"}>Status</Text>{" "}
-                <Switch
-                  checked={chapterDetails.chapterStatus}
-                  variant="soft"
-                  color="green"
-                  onCheckedChange={(value) =>
+            <Flex align={"end"} gap={"3"}>
+              <Flex direction={"column"} gap={"1"} className="w-2/3">
+                <Text size={"1"}>Chapter Number</Text>
+                <TextField.Input
+                  defaultValue={chapterDetails.chapterNumber}
+                  placeholder="Enter Chapter number"
+                  onChange={(e) =>
                     setChapterDetails({
                       ...chapterDetails,
-                      chapterStatus: value,
+                      chapterNumber: parseInt(e.target.value),
                     })
                   }
                 />
               </Flex>
-            </label>
+              <label className="w-1/3">
+                <Flex
+                  gap="2"
+                  className="border w-fit p-2 shadow-sm rounded-md "
+                >
+                  <Text size={"1"}>Status</Text>{" "}
+                  <Switch
+                    checked={chapterDetails.chapterStatus}
+                    variant="soft"
+                    color="green"
+                    size={"1"}
+                    onCheckedChange={(value) =>
+                      setChapterDetails({
+                        ...chapterDetails,
+                        chapterStatus: value,
+                      })
+                    }
+                  />
+                </Flex>
+              </label>
+            </Flex>
           </Flex>
 
           <Flex gap="3" mt="4" justify="end">

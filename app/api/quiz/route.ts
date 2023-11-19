@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
         topic_id: parseInt(body.topicId),
         question: question.question,
         type: question.type,
+        correctAnswer: question.correctAnswer,
         correctOption:
           question.type == "MULTIPLE_CHOICE" ? question.correctOption : null,
       },
