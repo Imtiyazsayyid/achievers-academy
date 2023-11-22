@@ -1,4 +1,5 @@
 "use client";
+import { topicSchema } from "@/app/validationSchemas";
 import { Topic } from "@prisma/client";
 import {
   Button,
@@ -57,6 +58,17 @@ const EditTopicPage = ({ params }: Props) => {
   });
 
   const updateTopic = async () => {
+    const validation = topicSchema.safeParse({
+      topicName: topicDetails.topicName,
+    });
+
+    if (!validation.success) {
+      for (let error of validation.error.errors) {
+        toast.error(error.message);
+      }
+      return;
+    }
+
     const res = await axios.put("/api/topic", {
       ...topicDetails,
       chapter_id: params.chapterId,
@@ -76,7 +88,7 @@ const EditTopicPage = ({ params }: Props) => {
   };
 
   return (
-    <Flex className="h-[90vh] w-full">
+    <Flex className="min-h-[90vh] w-full">
       <Flex
         direction={"column"}
         m={"9"}

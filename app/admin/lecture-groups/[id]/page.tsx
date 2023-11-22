@@ -2,11 +2,15 @@
 
 import DeleteConfirmation from "@/app/components/DeleteConfirmation";
 import GoBack from "@/app/components/GoBack";
+import Pagination from "@/app/components/Pagination";
 import SearchBar from "@/app/components/SearchBar";
 import StatusBadge from "@/app/components/StatusBadge";
+import StatusFilter from "@/app/components/filters/StatusFilter";
 import { Student, StudentLectureGroupMapper } from "@prisma/client";
-import { Flex, Heading, ScrollArea, Table } from "@radix-ui/themes";
+import { Pencil2Icon } from "@radix-ui/react-icons";
+import { Button, Flex, Heading, ScrollArea, Table } from "@radix-ui/themes";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -24,15 +28,33 @@ const LectureGroupView = ({ params }: Props) => {
   const [searchText, setSearchText] = useState("");
   const [lectureGroupStudents, setLectureGroupStudents] =
     useState<LectureGroupStudent[]>();
+  const [status, setStatus] = useState("all");
+
+  const [pagination, setPagination] = useState<{
+    pageNumber: number;
+    numberOfItems: number;
+    count: number;
+  }>({
+    pageNumber: 0,
+    numberOfItems: 7,
+    count: 0,
+  });
 
   const getAllLectureGroupStudents = async () => {
     const res = await axios.get("/api/student/lecture-group", {
       params: {
         lectureGroupId: params.id,
         searchText,
+        pageNumber: pagination.pageNumber,
+        numberOfItems: pagination.numberOfItems,
+        status,
       },
     });
     setLectureGroupStudents(res.data.data);
+    setPagination({
+      ...pagination,
+      count: res.data.count,
+    });
   };
 
   const deleteLectureGroup = async (id: number) => {
@@ -52,29 +74,40 @@ const LectureGroupView = ({ params }: Props) => {
     }
   };
 
+  const router = useRouter();
+
   useEffect(() => {
     getAllLectureGroupStudents();
-  }, [searchText]);
+  }, [searchText, pagination.numberOfItems, pagination.pageNumber, status]);
 
   return (
-    <Flex className="min-h-[90vh] w-full">
+    <Flex className="min-h-[90vh] w-full" direction={"column"}>
       <Flex
         direction={"column"}
-        m={"9"}
+        mt={"9"}
+        mb={"2"}
         p="5"
         px="8"
-        className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
+        className="bg-white border rounded-lg shadow-lg h-[70vh] w-full"
       >
         <GoBack />
         <Heading mb={"6"} mt="5">
           Lecture Group Students
         </Heading>
-        <Flex justify={"between"} mb={"2"}>
+        <Flex justify={"between"} mb={"2"} align={"end"}>
           <SearchBar
             placeholder={"Search For Lecture Group"}
             searchText={searchText}
             setSearchText={setSearchText}
+            setPagination={(pagination) => setPagination(pagination)}
+            pagination={pagination}
           />
+          <Flex gap={"2"} align={"end"}>
+            <StatusFilter
+              status={status}
+              setStatus={(status) => setStatus(status)}
+            />
+          </Flex>
         </Flex>
         <Table.Root variant="surface">
           <Table.Header>
@@ -103,11 +136,17 @@ const LectureGroupView = ({ params }: Props) => {
                 </Table.Cell>
                 <Table.Cell>
                   <Flex gap={"2"}>
-                    <DeleteConfirmation
-                      itemToBeDeletedName={student.student.name}
-                      itemToBeDeletedType="Lecture Group Student"
-                      confirmDelete={() => deleteLectureGroup(student.id)}
-                    />
+                    <Button
+                      variant="soft"
+                      onClick={() =>
+                        router.push(
+                          `/admin/students/edit/${student.student_id}`
+                        )
+                      }
+                    >
+                      {" "}
+                      <Pencil2Icon />
+                    </Button>
                   </Flex>
                 </Table.Cell>
               </Table.Row>
@@ -115,6 +154,10 @@ const LectureGroupView = ({ params }: Props) => {
           </Table.Body>
         </Table.Root>
       </Flex>
+      <Pagination
+        pagination={pagination}
+        setPagination={(pagination) => setPagination(pagination)}
+      />
     </Flex>
   );
 };

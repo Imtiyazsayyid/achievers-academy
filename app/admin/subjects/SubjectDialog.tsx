@@ -1,4 +1,5 @@
 "use client";
+import { subjectSchema } from "@/app/validationSchemas";
 import { Board, Grade } from "@prisma/client";
 import {
   Button,
@@ -89,6 +90,21 @@ const SubjectDialog = ({
   }
 
   const handleSubmit = () => {
+    const validation = subjectSchema.safeParse({
+      subjectName: subjectDetails.subjectName,
+      subjectShortForm: subjectDetails.subjectShortForm,
+      subjectImage: subjectDetails.subjectImage,
+      gradeId: parseInt(subjectDetails.gradeId),
+      boardId: parseInt(subjectDetails.boardId),
+    });
+
+    if (!validation.success) {
+      for (let error of validation.error.errors) {
+        toast.error(error.message);
+      }
+      return;
+    }
+
     if (type === "new") {
       addNewSubject();
     }

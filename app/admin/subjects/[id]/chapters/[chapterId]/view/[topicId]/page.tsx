@@ -59,7 +59,7 @@ const EditTopicPage = ({ params }: Props) => {
   });
 
   return (
-    <Flex className="h-[90vh] w-full" direction={"column"}>
+    <Flex className="min-h-[90vh] w-full" direction={"column"}>
       <Flex
         direction={"column"}
         m={"9"}

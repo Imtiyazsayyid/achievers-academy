@@ -19,7 +19,8 @@ const page = () => {
     const res = await axios.get("/api/subject/student", {
       params: {
         searchText,
-        studentId: 1,
+        studentId: 24,
+        onlyActive: true,
       },
     });
 
@@ -51,7 +52,8 @@ const page = () => {
         >
           {studentSubjects?.map((studentSubject) => (
             <SubjectCard
-              id={studentSubject.id}
+              key={studentSubject.id}
+              id={studentSubject.subject_id}
               img={studentSubject.subject.img}
               subject={studentSubject.subject.name}
             />

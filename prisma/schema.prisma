@@ -50,8 +50,7 @@ model Subject {
   grade        Grade                  @relation(fields: [grade_id], references: [id])
   chapters     Chapter[]
   students     StudentSubjectMapper[]
-  lectureGroup LectureGroup[]
-  // teachers     TeacherSubjectMapper[]
+  lectureGroups LectureGroup[]
 
   status     Boolean  @default(true)
   created_at DateTime @default(now())
@@ -219,9 +218,7 @@ model Teacher {
   name     String
   email    String @unique
   password String
-
-  // subjects     TeacherSubjectMapper[]
-  lectureGroup LectureGroup[]
+  lectureGroups LectureGroup[]
   // grades       TeacherGradeMapper[]
   // boards       TeacherBoardMapper[]
 

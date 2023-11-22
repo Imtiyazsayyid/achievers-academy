@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import React, { ReactNode, useState } from "react";
 import toast from "react-hot-toast";
+import { boardSchema } from "@/app/validationSchemas";
 
 interface Props {
   id?: number;
@@ -41,8 +42,6 @@ const BoardDialog = ({
   });
 
   async function addNewBoard() {
-    console.log(boardDetails);
-
     const res = await axios.post("/api/board", {
       boardName: boardDetails.boardName,
       boardShortForm: boardDetails.boardShortForm,
@@ -77,6 +76,18 @@ const BoardDialog = ({
   }
 
   const handleSubmit = () => {
+    const validation = boardSchema.safeParse({
+      boardName: boardDetails.boardName,
+      boardShortForm: boardDetails.boardShortForm,
+    });
+
+    if (!validation.success) {
+      for (let error of validation.error.errors) {
+        toast.error(error.message);
+      }
+      return;
+    }
+
     if (type === "new") {
       addNewBoard();
     }
@@ -94,7 +105,6 @@ const BoardDialog = ({
             {buttonText}
           </Button>
         </Dialog.Trigger>
-
         <Dialog.Content style={{ maxWidth: 450 }}>
           <Dialog.Title>{title}</Dialog.Title>
 
@@ -109,6 +119,7 @@ const BoardDialog = ({
                     boardName: e.target.value,
                   })
                 }
+                mt={"1"}
               />
             </label>
             <label>
@@ -121,6 +132,7 @@ const BoardDialog = ({
                     boardShortForm: e.target.value,
                   })
                 }
+                mt={"1"}
               />
             </label>
             <label>

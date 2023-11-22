@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
   const searchText = request.nextUrl.searchParams.get("searchText");
   const chapter_id = request.nextUrl.searchParams.get("chapterId");
   const topicId = request.nextUrl.searchParams.get("topicId");
+  const status = request.nextUrl.searchParams.get("status");
 
   if (!chapter_id)
     return NextResponse.json({ error: "Send All Details", status: false });
@@ -26,14 +27,37 @@ export async function GET(request: NextRequest) {
     };
   }
 
+  if (status && status != "all") {
+    where = {
+      ...where,
+      status: status === "active" ? true : false,
+    };
+  }
+
+  const pageNumber = request.nextUrl.searchParams.get("pageNumber");
+  const numberOfItems = request.nextUrl.searchParams.get("numberOfItems");
+  let pagination = {};
+
+  if (pageNumber && numberOfItems) {
+    pagination = {
+      skip: parseInt(pageNumber) * parseInt(numberOfItems),
+      take: parseInt(numberOfItems),
+    };
+  }
+
   const topics = await prisma.topic.findMany({
     where: {
       chapter_id: parseInt(chapter_id),
       ...where,
     },
+    ...pagination,
   });
 
-  return NextResponse.json({ data: topics, status: true });
+  const topicCount = await prisma.topic.count({
+    where,
+  });
+
+  return NextResponse.json({ data: topics, status: true, count: topicCount });
 }
 
 export async function POST(request: NextRequest) {
@@ -88,6 +112,27 @@ export async function DELETE(request: NextRequest) {
   if (!id) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
+
+  const topicQuizQuestions = await prisma.quizQuestion.findMany({
+    where: {
+      topic_id: parseInt(id),
+    },
+  });
+
+  for (let topicQuizQuestion of topicQuizQuestions) {
+    await prisma.quizQuestionOption.deleteMany({
+      where: {
+        quiz_question_id: topicQuizQuestion.id,
+      },
+    });
+  }
+
+  await prisma.quizQuestion.deleteMany({
+    where: {
+      topic_id: parseInt(id),
+    },
+  });
+
   const deletedTopic = await prisma.topic.delete({
     where: {
       id: parseInt(id),

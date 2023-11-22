@@ -26,6 +26,8 @@ import SearchBar from "@/app/components/SearchBar";
 import { useRouter } from "next/navigation";
 import GoBack from "@/app/components/GoBack";
 import DeleteConfirmation from "@/app/components/DeleteConfirmation";
+import Pagination from "@/app/components/Pagination";
+import StatusFilter from "@/app/components/filters/StatusFilter";
 
 interface Props {
   params: {
@@ -37,7 +39,18 @@ interface Props {
 const AllTopicsPage = ({ params }: Props) => {
   const [topics, setTopics] = useState<Topic[]>();
   const [searchText, setSearchText] = useState("");
+  const [status, setStatus] = useState("all");
+
   const router = useRouter();
+  const [pagination, setPagination] = useState<{
+    pageNumber: number;
+    numberOfItems: number;
+    count: number;
+  }>({
+    pageNumber: 0,
+    numberOfItems: 7,
+    count: 0,
+  });
 
   const getAllTopics = async () => {
     try {
@@ -45,9 +58,16 @@ const AllTopicsPage = ({ params }: Props) => {
         params: {
           searchText,
           chapterId: params.chapterId,
+          pageNumber: pagination.pageNumber,
+          numberOfItems: pagination.numberOfItems,
+          status,
         },
       });
       setTopics(res.data.data);
+      setPagination({
+        ...pagination,
+        count: res.data.count,
+      });
     } catch (error) {
       toast.error("Some Items are still using this.");
     }
@@ -66,42 +86,51 @@ const AllTopicsPage = ({ params }: Props) => {
       }
       getAllTopics();
     } catch (error) {
-      toast("Please Delete All Items Inside First");
+      toast.error("Please Delete All Items Inside First");
     }
   };
 
   useEffect(() => {
     getAllTopics();
-  }, [searchText]);
+  }, [searchText, pagination.numberOfItems, pagination.pageNumber, status]);
 
   return (
-    <Flex className="h-[90vh] w-full">
+    <Flex className="min-h-[90vh] w-full" direction={"column"}>
       <Flex
         direction={"column"}
-        m={"9"}
+        mt={"9"}
+        mb={"2"}
         p="5"
         px="8"
-        className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
+        className="bg-white border rounded-lg shadow-lg h-[70vh] w-full"
       >
         <GoBack />
         <Heading mt={"5"}>Topics</Heading>
-        <Flex justify={"between"} mb={"2"} mt={"6"}>
+        <Flex justify={"between"} mb={"2"} mt={"6"} align={"end"}>
           <SearchBar
             placeholder={"Search For Topic"}
             searchText={searchText}
             setSearchText={setSearchText}
+            setPagination={(pagination) => setPagination(pagination)}
+            pagination={pagination}
           />
-          <Button
-            variant="soft"
-            onClick={() =>
-              router.push(
-                `/admin/subjects/${params.id}/chapters/${params.chapterId}/new`
-              )
-            }
-          >
-            <PlusIcon />
-            Add New
-          </Button>
+          <Flex gap={"2"} align={"end"}>
+            <StatusFilter
+              status={status}
+              setStatus={(status) => setStatus(status)}
+            />
+            <Button
+              variant="soft"
+              onClick={() =>
+                router.push(
+                  `/admin/subjects/${params.id}/chapters/${params.chapterId}/new`
+                )
+              }
+            >
+              <PlusIcon />
+              Add New
+            </Button>
+          </Flex>
         </Flex>
 
         {/* Table */}
@@ -182,6 +211,10 @@ const AllTopicsPage = ({ params }: Props) => {
           </Table.Body>
         </Table.Root>
       </Flex>
+      <Pagination
+        pagination={pagination}
+        setPagination={(pagination) => setPagination(pagination)}
+      />
     </Flex>
   );
 };

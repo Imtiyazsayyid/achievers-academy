@@ -1,3 +1,4 @@
+import { lectureGroupSchema } from "@/app/validationSchemas";
 import { Board, Grade, Subject, Teacher } from "@prisma/client";
 import { ButtonIcon, PlusIcon } from "@radix-ui/react-icons";
 import {
@@ -83,6 +84,23 @@ const LectureGroupDialog = ({
   }
 
   const handleSubmit = () => {
+    const validation = lectureGroupSchema.safeParse({
+      lectureGroupName: lectureGroupDetails.lectureGroupName,
+      subjectId:
+        lectureGroupDetails.subjectId &&
+        parseInt(lectureGroupDetails.subjectId),
+      teacherId:
+        lectureGroupDetails.teacherId &&
+        parseInt(lectureGroupDetails.teacherId),
+    });
+
+    if (!validation.success) {
+      for (let error of validation.error.errors) {
+        toast.error(error.message);
+      }
+      return;
+    }
+
     if (type === "new") {
       addNewLectureGroup();
     }

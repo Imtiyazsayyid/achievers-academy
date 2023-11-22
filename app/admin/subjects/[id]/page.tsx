@@ -26,6 +26,8 @@ import SearchBar from "@/app/components/SearchBar";
 import { useRouter } from "next/navigation";
 import GoBack from "@/app/components/GoBack";
 import DeleteConfirmation from "@/app/components/DeleteConfirmation";
+import Pagination from "@/app/components/Pagination";
+import StatusFilter from "@/app/components/filters/StatusFilter";
 
 interface Props {
   params: {
@@ -36,16 +38,34 @@ interface Props {
 const ChaptersPage = ({ params }: Props) => {
   const [chapters, setChapters] = useState<Chapter[]>();
   const [searchText, setSearchText] = useState("");
+  const [status, setStatus] = useState("all");
+
   const router = useRouter();
+  const [pagination, setPagination] = useState<{
+    pageNumber: number;
+    numberOfItems: number;
+    count: number;
+  }>({
+    pageNumber: 0,
+    numberOfItems: 7,
+    count: 0,
+  });
 
   const getAllChapters = async () => {
     const res = await axios.get("/api/chapter", {
       params: {
         searchText,
         subjectId: params.id,
+        pageNumber: pagination.pageNumber,
+        numberOfItems: pagination.numberOfItems,
+        status,
       },
     });
     setChapters(res.data.data);
+    setPagination({
+      ...pagination,
+      count: res.data.count,
+    });
   };
 
   const deleteChapter = async (id: number) => {
@@ -67,34 +87,43 @@ const ChaptersPage = ({ params }: Props) => {
 
   useEffect(() => {
     getAllChapters();
-  }, [searchText]);
+  }, [searchText, pagination.numberOfItems, pagination.pageNumber, status]);
 
   return (
-    <Flex className="h-[90vh] w-full">
+    <Flex className="min-h-[90vh] w-full" direction={"column"}>
       <Flex
         direction={"column"}
-        m={"9"}
+        mt={"9"}
+        mb={"2"}
         p="5"
         px="8"
-        className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
+        className="bg-white border rounded-lg shadow-lg h-[70vh] w-full"
       >
         <GoBack />
         <Heading mt={"5"}>Chapters</Heading>
-        <Flex justify={"between"} mb={"2"} mt={"6"}>
+        <Flex justify={"between"} mb={"2"} mt={"6"} align={"end"}>
           <SearchBar
             placeholder={"Search For Chapter"}
             searchText={searchText}
             setSearchText={setSearchText}
+            setPagination={(pagination) => setPagination(pagination)}
+            pagination={pagination}
           />
-          <ChapterDialog
-            title="Add Chapter"
-            chapterStatus={true}
-            buttonIcon={<PlusIcon />}
-            buttonText={"Add New"}
-            type="new"
-            getAllChapters={getAllChapters}
-            subjectId={params.id}
-          />
+          <Flex gap={"2"} align={"end"}>
+            <StatusFilter
+              status={status}
+              setStatus={(status) => setStatus(status)}
+            />
+            <ChapterDialog
+              title="Add Chapter"
+              chapterStatus={true}
+              buttonIcon={<PlusIcon />}
+              buttonText={"Add New"}
+              type="new"
+              getAllChapters={getAllChapters}
+              subjectId={params.id}
+            />
+          </Flex>
         </Flex>
 
         {/* Table */}
@@ -165,6 +194,10 @@ const ChaptersPage = ({ params }: Props) => {
           </Table.Body>
         </Table.Root>
       </Flex>
+      <Pagination
+        pagination={pagination}
+        setPagination={(pagination) => setPagination(pagination)}
+      />
     </Flex>
   );
 };

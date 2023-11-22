@@ -1,7 +1,6 @@
 "use client";
 import StatusBadge from "@/app/components/StatusBadge";
 import {
-  EyeOpenIcon,
   MagnifyingGlassIcon,
   Pencil2Icon,
   PlusIcon,
@@ -18,8 +17,7 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import LectureGroupDialog from "./LectureGroupDialog";
-import { Board, Grade, LectureGroup, Subject, Teacher } from "@prisma/client";
+import { Board, Grade, Teacher, Subject, LectureGroup } from "@prisma/client";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SearchBar from "@/app/components/SearchBar";
@@ -27,7 +25,16 @@ import GoBack from "@/app/components/GoBack";
 import DeleteConfirmation from "@/app/components/DeleteConfirmation";
 import { useRouter } from "next/navigation";
 import Pagination from "@/app/components/Pagination";
+import LectureGroupsHoverCard from "./LectureGroupsHoverCard";
+import TeacherDialog from "./TeacherDialog";
 import StatusFilter from "@/app/components/filters/StatusFilter";
+
+type DetailedTeacher = Teacher & {
+  board: Board;
+  grade: Grade;
+  subjects: Subject[];
+  lectureGroups: DetailedLectureGroup[];
+};
 
 type DetailedLectureGroup = LectureGroup & {
   subject: Subject & {
@@ -37,8 +44,8 @@ type DetailedLectureGroup = LectureGroup & {
   teacher: Teacher;
 };
 
-const LectureGroupsPage = () => {
-  const [lectureGroups, setLectureGroups] = useState<DetailedLectureGroup[]>();
+const TeachersPage = () => {
+  const [teachers, setTeachers] = useState<DetailedTeacher[]>();
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState("all");
 
@@ -51,10 +58,11 @@ const LectureGroupsPage = () => {
     numberOfItems: 7,
     count: 0,
   });
+
   const router = useRouter();
 
-  const getAllLectureGroups = async () => {
-    const res = await axios.get("/api/lecture-group", {
+  const getAllTeachers = async () => {
+    const res = await axios.get("/api/teacher", {
       params: {
         searchText,
         pageNumber: pagination.pageNumber,
@@ -62,51 +70,63 @@ const LectureGroupsPage = () => {
         status,
       },
     });
-    setLectureGroups(res.data.data);
+    setTeachers(res.data.data);
     setPagination({
       ...pagination,
       count: res.data.count,
     });
   };
 
-  const deleteLectureGroup = async (id: number) => {
+  const getLectureGroupList = (lectureGroups: DetailedLectureGroup[]) => {
+    const lectureGroupList = [];
+
+    for (let lectureGroup of lectureGroups) {
+      lectureGroupList.push(
+        `${lectureGroup.name} ${lectureGroup.subject.name} (${lectureGroup.subject.board.key}-${lectureGroup.subject.grade.name})`
+      );
+    }
+
+    return lectureGroupList;
+  };
+
+  const deleteTeacher = async (id: number) => {
     try {
-      const res = await axios.delete("/api/lecture-group", {
+      const res = await axios.delete("/api/teacher", {
         params: {
           id,
         },
       });
 
       if (res.data.status) {
-        toast.success("Lecture Group Deleted");
+        toast.success("Teacher Deleted");
       }
-      getAllLectureGroups();
+      getAllTeachers();
     } catch (error) {
       toast.error("Some Items are still using this.");
     }
   };
 
   useEffect(() => {
-    getAllLectureGroups();
+    getAllTeachers();
   }, [searchText, pagination.numberOfItems, pagination.pageNumber, status]);
 
   return (
-    <Flex className="min-h-[90vh] overflow-hidden" direction={"column"}>
+    <Flex className="min-h-[90vh] w-full" direction={"column"}>
       <Flex
         direction={"column"}
         mt={"9"}
-        mb={"2"}
+        mb={"1"}
         p="5"
         px="8"
         className="bg-white border rounded-lg shadow-lg h-[70vh] w-full"
       >
         <GoBack />
         <Heading mb={"6"} mt="5">
-          Lecture Groups
+          All Teachers
         </Heading>
         <Flex justify={"between"} mb={"2"} align={"end"}>
           <SearchBar
-            placeholder={"Search For Lecture Group"}
+            placeholder={"Search For Teacher"}
             searchText={searchText}
             setSearchText={setSearchText}
             setPagination={(pagination) => setPagination(pagination)}
@@ -117,80 +137,73 @@ const LectureGroupsPage = () => {
               status={status}
               setStatus={(status) => setStatus(status)}
             />
-            <LectureGroupDialog
-              title="Add Lecture Group"
-              lectureGroupStatus={true}
+            <TeacherDialog
+              title="Add Teacher"
+              teacherStatus={true}
               buttonIcon={<PlusIcon />}
               buttonText={"Add New"}
               type="new"
-              getAllLectureGroups={getAllLectureGroups}
+              getAllTeachers={getAllTeachers}
             />
           </Flex>
         </Flex>
 
         {/* Table */}
 
-        <Table.Root variant="surface" className="">
+        <Table.Root variant="surface">
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Board </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Grade</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Subject</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Teacher</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Email</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Password</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Lecture Groups</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
-            {lectureGroups?.map((lectureGroup) => (
-              <Table.Row align={"center"} key={lectureGroup.id}>
-                <Table.RowHeaderCell>{lectureGroup.name}</Table.RowHeaderCell>
+            {teachers?.map((teacher) => (
+              <Table.Row align={"center"} key={teacher.id}>
+                <Table.RowHeaderCell>{teacher.name}</Table.RowHeaderCell>
+                <Table.RowHeaderCell>{teacher.email}</Table.RowHeaderCell>
+                <Table.RowHeaderCell>{teacher.password}</Table.RowHeaderCell>
                 <Table.RowHeaderCell>
-                  {lectureGroup.subject.board?.key}
+                  <LectureGroupsHoverCard
+                    lectureGroups={getLectureGroupList(teacher.lectureGroups)}
+                  />
                 </Table.RowHeaderCell>
-                <Table.RowHeaderCell>
-                  {lectureGroup.subject.grade?.name}
-                </Table.RowHeaderCell>
-                <Table.RowHeaderCell>
-                  {lectureGroup.subject?.name}
-                </Table.RowHeaderCell>
-                <Table.RowHeaderCell>
-                  {lectureGroup.teacher.name}
-                </Table.RowHeaderCell>
+
                 <Table.Cell>
-                  <StatusBadge status={lectureGroup.status} />
+                  <StatusBadge status={teacher.status} />
                 </Table.Cell>
                 <Table.Cell>
                   <Flex gap={"2"}>
-                    <LectureGroupDialog
-                      title="Update LectureGroup"
+                    <TeacherDialog
+                      title="Update Teacher"
                       type="update"
                       buttonIcon={
                         <Pencil2Icon className="cursor-pointer text-slate-500" />
                       }
-                      lectureGroupStatus={lectureGroup.status}
-                      subjectId={lectureGroup.subject_id.toString()}
-                      teacherId={lectureGroup.teacher_id.toString()}
-                      lectureGroupName={lectureGroup.name}
-                      getAllLectureGroups={getAllLectureGroups}
-                      id={lectureGroup.id}
-                    ></LectureGroupDialog>
-                    <DeleteConfirmation
-                      itemToBeDeletedName={lectureGroup.name}
-                      itemToBeDeletedType="LectureGroup"
-                      confirmDelete={() => deleteLectureGroup(lectureGroup.id)}
-                    />
-                    <Button
-                      color="blue"
+                      teacherStatus={teacher.status}
+                      teacherName={teacher.name}
+                      teacherEmail={teacher.email}
+                      teacherPassword={teacher.password}
+                      getAllTeachers={getAllTeachers}
+                      id={teacher.id}
+                    ></TeacherDialog>
+                    {/* <Button
                       variant="soft"
-                      onClick={() =>
-                        router.push(`/admin/lecture-groups/${lectureGroup.id}`)
-                      }
+                      color="red"
+                      onClick={() => deleteTeacher(teacher.id)}
                     >
-                      <EyeOpenIcon />
-                    </Button>
+                      <TrashIcon />
+                    </Button> */}
+                    <DeleteConfirmation
+                      itemToBeDeletedName={teacher.name}
+                      itemToBeDeletedType="Teacher"
+                      confirmDelete={() => deleteTeacher(teacher.id)}
+                    />
                   </Flex>
                 </Table.Cell>
               </Table.Row>
@@ -206,4 +219,4 @@ const LectureGroupsPage = () => {
   );
 };
 
-export default LectureGroupsPage;
+export default TeachersPage;

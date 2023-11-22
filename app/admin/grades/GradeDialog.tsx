@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import React, { ReactNode, useState } from "react";
 import toast from "react-hot-toast";
+import { gradeSchema } from "@/app/validationSchemas";
 
 interface Props {
   id?: number;
@@ -71,6 +72,17 @@ const GradeDialog = ({
   }
 
   const handleSubmit = () => {
+    const validation = gradeSchema.safeParse({
+      gradeName: gradeDetails.gradeName,
+    });
+
+    if (!validation.success) {
+      for (let error of validation.error.errors) {
+        toast.error(error.message);
+      }
+      return;
+    }
+
     if (type === "new") {
       addNewGrade();
     }

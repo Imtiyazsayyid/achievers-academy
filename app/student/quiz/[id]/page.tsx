@@ -150,6 +150,7 @@ const QuizPage = ({ params }: Props) => {
               className="h-fit border bg-white w-full rounded-lg shadow-sm p-5"
               gap={"4"}
               direction={"column"}
+              key={question.id}
             >
               <Text className="text-xs text-slate-500">
                 Question {index + 1}
@@ -209,7 +210,7 @@ const QuizPage = ({ params }: Props) => {
                   >
                     <Flex gap="2" direction="column">
                       {question.options.map((option) => (
-                        <Text as="label" size="2">
+                        <Text as="label" size="2" key={option.id}>
                           <Flex gap="2">
                             <RadioGroup.Item
                               value={option.option_number.toString()}

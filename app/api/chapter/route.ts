@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
 
   const searchText = request.nextUrl.searchParams.get("searchText");
   const subjectId = request.nextUrl.searchParams.get("subjectId");
+  const status = request.nextUrl.searchParams.get("status");
 
   if (!subjectId)
     return NextResponse.json({ error: "Send All Details", status: false });
@@ -15,6 +16,24 @@ export async function GET(request: NextRequest) {
       name: {
         contains: searchText,
       },
+    };
+  }
+
+  const pageNumber = request.nextUrl.searchParams.get("pageNumber");
+  const numberOfItems = request.nextUrl.searchParams.get("numberOfItems");
+  let pagination = {};
+
+  if (pageNumber && numberOfItems) {
+    pagination = {
+      skip: parseInt(pageNumber) * parseInt(numberOfItems),
+      take: parseInt(numberOfItems),
+    };
+  }
+
+  if (status && status != "all") {
+    where = {
+      ...where,
+      status: status === "active" ? true : false,
     };
   }
 
@@ -29,9 +48,18 @@ export async function GET(request: NextRequest) {
     orderBy: {
       chapter_number: "asc",
     },
+    ...pagination,
   });
 
-  return NextResponse.json({ data: chapters, status: true });
+  const chaptersCount = await prisma.chapter.count({
+    where,
+  });
+
+  return NextResponse.json({
+    data: chapters,
+    status: true,
+    count: chaptersCount,
+  });
 }
 
 export async function POST(request: NextRequest) {

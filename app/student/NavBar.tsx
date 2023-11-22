@@ -13,7 +13,11 @@ const NavBar = () => {
           <Flex className="w-1/5" align={"center"} justify={"center"}></Flex>
           <Flex className="w-3/5" align={"center"} justify={"center"} gap={"9"}>
             {Links.map(({ label, link }) => (
-              <Link href={link} className="hover:text-[var(--violet-a11)]">
+              <Link
+                href={link}
+                className="hover:text-[var(--violet-a11)]"
+                key={link}
+              >
                 {label}
               </Link>
             ))}

@@ -1,6 +1,7 @@
 "use client";
 import StatusBadge from "@/app/components/StatusBadge";
 import {
+  ArrowLeftIcon,
   ArrowRightIcon,
   EyeOpenIcon,
   Pencil2Icon,
@@ -26,6 +27,10 @@ import SearchBar from "@/app/components/SearchBar";
 import { useRouter } from "next/navigation";
 import GoBack from "@/app/components/GoBack";
 import DeleteConfirmation from "@/app/components/DeleteConfirmation";
+import Pagination from "@/app/components/Pagination";
+import StatusFilter from "@/app/components/filters/StatusFilter";
+import BoardFilter from "@/app/components/filters/BoardFilter";
+import GradeFilter from "@/app/components/filters/GradeFilter";
 
 type DetailedSubject = Subject & {
   grade: Grade;
@@ -35,15 +40,38 @@ type DetailedSubject = Subject & {
 const SubjectsPage = () => {
   const [subjects, setSubjects] = useState<DetailedSubject[]>();
   const [searchText, setSearchText] = useState("");
+  const [status, setStatus] = useState("all");
+  const [boardId, setBoardId] = useState("all");
+  const [gradeId, setGradeId] = useState("all");
+
+  const [pagination, setPagination] = useState<{
+    pageNumber: number;
+    numberOfItems: number;
+    count: number;
+  }>({
+    pageNumber: 0,
+    numberOfItems: 7,
+    count: 0,
+  });
+
   const router = useRouter();
 
   const getAllSubjects = async () => {
     const res = await axios.get("/api/subject", {
       params: {
         searchText,
+        pageNumber: pagination.pageNumber,
+        numberOfItems: pagination.numberOfItems,
+        status,
+        boardId,
+        gradeId,
       },
     });
     setSubjects(res.data.data);
+    setPagination({
+      ...pagination,
+      count: res.data.count,
+    });
   };
 
   const deleteSubject = async (id: number) => {
@@ -65,33 +93,54 @@ const SubjectsPage = () => {
 
   useEffect(() => {
     getAllSubjects();
-  }, [searchText]);
+  }, [searchText, status, boardId, gradeId]);
+
+  useEffect(() => {
+    getAllSubjects();
+  }, [pagination.numberOfItems, pagination.pageNumber]);
 
   return (
-    <Flex className="h-[90vh] w-full">
+    <Flex className="min-h-[90vh] w-full" gap={"2"} direction={"column"}>
       <Flex
         direction={"column"}
-        m={"9"}
+        mt={"9"}
+        mb="0"
         p="5"
         px="8"
-        className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
+        className="bg-white border rounded-lg shadow-lg h-[70vh] w-full"
       >
         <GoBack />
         <Heading mt={"5"}>Subjects</Heading>
-        <Flex justify={"between"} mb={"2"} mt={"6"}>
+        <Flex justify={"between"} mb={"2"} mt={"6"} align={"end"}>
           <SearchBar
             placeholder={"Search For Subject"}
             searchText={searchText}
             setSearchText={setSearchText}
+            setPagination={(pagination) => setPagination(pagination)}
+            pagination={pagination}
           />
-          <SubjectDialog
-            title="Add Subject"
-            subjectStatus={true}
-            buttonIcon={<PlusIcon />}
-            buttonText={"Add New"}
-            type="new"
-            getAllSubjects={getAllSubjects}
-          />
+          <Flex gap={"2"} align={"end"}>
+            <StatusFilter
+              status={status}
+              setStatus={(status) => setStatus(status)}
+            />
+            <BoardFilter
+              boardId={boardId}
+              setBoardId={(boardId) => setBoardId(boardId)}
+            />
+            <GradeFilter
+              gradeId={gradeId}
+              setGradeId={(gradeId) => setGradeId(gradeId)}
+            />
+            <SubjectDialog
+              title="Add Subject"
+              subjectStatus={true}
+              buttonIcon={<PlusIcon />}
+              buttonText={"Add New"}
+              type="new"
+              getAllSubjects={getAllSubjects}
+            />
+          </Flex>
         </Flex>
 
         {/* Table */}
@@ -168,6 +217,12 @@ const SubjectsPage = () => {
           </Table.Body>
         </Table.Root>
       </Flex>
+      {/* {(!pagination.maxPageNumber || pagination.maxPageNumber <= 1) && ( */}
+      <Pagination
+        pagination={pagination}
+        setPagination={(pagination) => setPagination(pagination)}
+      />
+      {/* )} */}
     </Flex>
   );
 };

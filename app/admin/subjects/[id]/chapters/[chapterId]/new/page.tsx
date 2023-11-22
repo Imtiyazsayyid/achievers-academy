@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import QuizInput from "../components/QuizInput";
+import { topicSchema } from "@/app/validationSchemas";
 
 interface Props {
   params: {
@@ -34,6 +35,17 @@ const NewTopicPage = ({ params }: Props) => {
   });
 
   const saveTopic = async () => {
+    const validation = topicSchema.safeParse({
+      topicName: topicDetails.topicName,
+    });
+
+    if (!validation.success) {
+      for (let error of validation.error.errors) {
+        toast.error(error.message);
+      }
+      return;
+    }
+
     const res = await axios.post("/api/topic", {
       ...topicDetails,
       chapter_id: params.chapterId,
@@ -45,7 +57,7 @@ const NewTopicPage = ({ params }: Props) => {
   };
 
   return (
-    <Flex className="h-[90vh] w-full">
+    <Flex className="min-h-[90vh] w-full">
       <Flex
         direction={"column"}
         m={"9"}

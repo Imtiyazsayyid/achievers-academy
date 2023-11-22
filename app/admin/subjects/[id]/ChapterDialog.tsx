@@ -1,4 +1,5 @@
 "use client";
+import { chapterSchema } from "@/app/validationSchemas";
 import { Board, Grade } from "@prisma/client";
 import {
   Button,
@@ -82,6 +83,17 @@ const ChapterDialog = ({
   }
 
   const handleSubmit = () => {
+    const validation = chapterSchema.safeParse({
+      chapterName: chapterDetails.chapterName,
+      chapterNumber: chapterDetails.chapterNumber,
+    });
+
+    if (!validation.success) {
+      for (let error of validation.error.errors) {
+        toast.error(error.message);
+      }
+      return;
+    }
     if (type === "new") {
       addNewChapter();
     }
@@ -95,7 +107,9 @@ const ChapterDialog = ({
       chapterName: "",
       chapterStatus: true,
       subjectId: subjectId,
-      chapterNumber: chapterDetails.chapterNumber,
+      chapterNumber: chapterDetails.chapterNumber
+        ? chapterDetails.chapterNumber + 1
+        : chapterDetails.chapterNumber,
     });
   };
 

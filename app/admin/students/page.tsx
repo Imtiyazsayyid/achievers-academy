@@ -1,7 +1,6 @@
 "use client";
 import StatusBadge from "@/app/components/StatusBadge";
 import {
-  EyeOpenIcon,
   MagnifyingGlassIcon,
   Pencil2Icon,
   PlusIcon,
@@ -18,8 +17,7 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import LectureGroupDialog from "./LectureGroupDialog";
-import { Board, Grade, LectureGroup, Subject, Teacher } from "@prisma/client";
+import { Board, Grade, Student, Subject } from "@prisma/client";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SearchBar from "@/app/components/SearchBar";
@@ -29,16 +27,14 @@ import { useRouter } from "next/navigation";
 import Pagination from "@/app/components/Pagination";
 import StatusFilter from "@/app/components/filters/StatusFilter";
 
-type DetailedLectureGroup = LectureGroup & {
-  subject: Subject & {
-    board: Board;
-    grade: Grade;
-  };
-  teacher: Teacher;
+type DetailedStudent = Student & {
+  board: Board;
+  grade: Grade;
+  subjects: Subject[];
 };
 
-const LectureGroupsPage = () => {
-  const [lectureGroups, setLectureGroups] = useState<DetailedLectureGroup[]>();
+const StudentsPage = () => {
+  const [students, setStudents] = useState<DetailedStudent[]>();
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState("all");
 
@@ -51,10 +47,11 @@ const LectureGroupsPage = () => {
     numberOfItems: 7,
     count: 0,
   });
+
   const router = useRouter();
 
-  const getAllLectureGroups = async () => {
-    const res = await axios.get("/api/lecture-group", {
+  const getAllStudents = async () => {
+    const res = await axios.get("/api/student", {
       params: {
         searchText,
         pageNumber: pagination.pageNumber,
@@ -62,51 +59,51 @@ const LectureGroupsPage = () => {
         status,
       },
     });
-    setLectureGroups(res.data.data);
+    setStudents(res.data.data);
     setPagination({
       ...pagination,
       count: res.data.count,
     });
   };
 
-  const deleteLectureGroup = async (id: number) => {
+  const deleteStudent = async (id: number) => {
     try {
-      const res = await axios.delete("/api/lecture-group", {
+      const res = await axios.delete("/api/student", {
         params: {
           id,
         },
       });
 
       if (res.data.status) {
-        toast.success("Lecture Group Deleted");
+        toast.success("Student Deleted");
       }
-      getAllLectureGroups();
+      getAllStudents();
     } catch (error) {
       toast.error("Some Items are still using this.");
     }
   };
 
   useEffect(() => {
-    getAllLectureGroups();
+    getAllStudents();
   }, [searchText, pagination.numberOfItems, pagination.pageNumber, status]);
 
   return (
-    <Flex className="min-h-[90vh] overflow-hidden" direction={"column"}>
+    <Flex className="min-h-[90vh] w-full" direction={"column"}>
       <Flex
         direction={"column"}
         mt={"9"}
-        mb={"2"}
+        mb={"1"}
         p="5"
         px="8"
         className="bg-white border rounded-lg shadow-lg h-[70vh] w-full"
       >
         <GoBack />
         <Heading mb={"6"} mt="5">
-          Lecture Groups
+          All Students
         </Heading>
         <Flex justify={"between"} mb={"2"} align={"end"}>
           <SearchBar
-            placeholder={"Search For Lecture Group"}
+            placeholder={"Search For Student"}
             searchText={searchText}
             setSearchText={setSearchText}
             setPagination={(pagination) => setPagination(pagination)}
@@ -117,80 +114,80 @@ const LectureGroupsPage = () => {
               status={status}
               setStatus={(status) => setStatus(status)}
             />
-            <LectureGroupDialog
-              title="Add Lecture Group"
-              lectureGroupStatus={true}
-              buttonIcon={<PlusIcon />}
-              buttonText={"Add New"}
-              type="new"
-              getAllLectureGroups={getAllLectureGroups}
-            />
+            <Button
+              variant="soft"
+              onClick={() => router.push("/admin/students/new")}
+            >
+              <PlusIcon /> Add New
+            </Button>
+            {/* <StudentDialog
+            title="Add Student"
+            studentStatus={true}
+            buttonIcon={<PlusIcon />}
+            buttonText={"Add New"}
+            type="new"
+            getAllStudents={getAllStudents}
+          /> */}
           </Flex>
         </Flex>
 
         {/* Table */}
 
-        <Table.Root variant="surface" className="">
+        <Table.Root variant="surface">
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Board </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Email</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Board</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Grade</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Subject</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Teacher</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
-            {lectureGroups?.map((lectureGroup) => (
-              <Table.Row align={"center"} key={lectureGroup.id}>
-                <Table.RowHeaderCell>{lectureGroup.name}</Table.RowHeaderCell>
-                <Table.RowHeaderCell>
-                  {lectureGroup.subject.board?.key}
-                </Table.RowHeaderCell>
-                <Table.RowHeaderCell>
-                  {lectureGroup.subject.grade?.name}
-                </Table.RowHeaderCell>
-                <Table.RowHeaderCell>
-                  {lectureGroup.subject?.name}
-                </Table.RowHeaderCell>
-                <Table.RowHeaderCell>
-                  {lectureGroup.teacher.name}
-                </Table.RowHeaderCell>
+            {students?.map((student) => (
+              <Table.Row align={"center"} key={student.id}>
+                <Table.RowHeaderCell>{student.name}</Table.RowHeaderCell>
+                <Table.RowHeaderCell>{student.email}</Table.RowHeaderCell>
+                <Table.RowHeaderCell>{student.board.key}</Table.RowHeaderCell>
+                <Table.RowHeaderCell>{student.grade.name}</Table.RowHeaderCell>
                 <Table.Cell>
-                  <StatusBadge status={lectureGroup.status} />
+                  <StatusBadge status={student.status} />
                 </Table.Cell>
                 <Table.Cell>
                   <Flex gap={"2"}>
-                    <LectureGroupDialog
-                      title="Update LectureGroup"
+                    <Button
+                      variant="soft"
+                      onClick={() =>
+                        router.push("/admin/students/edit/" + student.id)
+                      }
+                    >
+                      <Pencil2Icon />
+                    </Button>
+                    {/* <StudentDialog
+                      title="Update Student"
                       type="update"
                       buttonIcon={
                         <Pencil2Icon className="cursor-pointer text-slate-500" />
                       }
-                      lectureGroupStatus={lectureGroup.status}
-                      subjectId={lectureGroup.subject_id.toString()}
-                      teacherId={lectureGroup.teacher_id.toString()}
-                      lectureGroupName={lectureGroup.name}
-                      getAllLectureGroups={getAllLectureGroups}
-                      id={lectureGroup.id}
-                    ></LectureGroupDialog>
-                    <DeleteConfirmation
-                      itemToBeDeletedName={lectureGroup.name}
-                      itemToBeDeletedType="LectureGroup"
-                      confirmDelete={() => deleteLectureGroup(lectureGroup.id)}
-                    />
-                    <Button
-                      color="blue"
+                      studentStatus={student.status}
+                      studentName={student.name}
+                      getAllStudents={getAllStudents}
+                      id={student.id}
+                    ></StudentDialog> */}
+                    {/* <Button
                       variant="soft"
-                      onClick={() =>
-                        router.push(`/admin/lecture-groups/${lectureGroup.id}`)
-                      }
+                      color="red"
+                      onClick={() => deleteStudent(student.id)}
                     >
-                      <EyeOpenIcon />
-                    </Button>
+                      <TrashIcon />
+                    </Button> */}
+                    <DeleteConfirmation
+                      itemToBeDeletedName={student.name}
+                      itemToBeDeletedType="Student"
+                      confirmDelete={() => deleteStudent(student.id)}
+                    />
                   </Flex>
                 </Table.Cell>
               </Table.Row>
@@ -206,4 +203,4 @@ const LectureGroupsPage = () => {
   );
 };
 
-export default LectureGroupsPage;
+export default StudentsPage;

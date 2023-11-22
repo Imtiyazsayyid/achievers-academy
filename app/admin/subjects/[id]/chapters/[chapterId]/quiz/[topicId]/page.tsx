@@ -12,10 +12,10 @@ interface Props {
 
 const page = ({ params }: Props) => {
   return (
-    <Flex className="h-[90vh] w-full">
+    <Flex className="min-h-[90vh] w-full">
       <Flex
         direction={"column"}
-        m={"9"}
+        my={"9"}
         p="5"
         px="8"
         className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"

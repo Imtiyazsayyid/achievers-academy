@@ -5,12 +5,43 @@ export async function GET(request: NextRequest) {
   let where: any = {};
 
   const searchText = request.nextUrl.searchParams.get("searchText");
+  const boardId = request.nextUrl.searchParams.get("boardId");
+  const gradeId = request.nextUrl.searchParams.get("gradeId");
+  const status = request.nextUrl.searchParams.get("status");
 
   if (searchText) {
     where = {
       name: {
         contains: searchText,
       },
+    };
+  }
+
+  if (boardId && gradeId) {
+    where = {
+      ...where,
+      subject: {
+        board_id: parseInt(boardId),
+        grade_id: parseInt(gradeId),
+      },
+    };
+  }
+
+  if (status && status != "all") {
+    where = {
+      ...where,
+      status: status === "active" ? true : false,
+    };
+  }
+
+  const pageNumber = request.nextUrl.searchParams.get("pageNumber");
+  const numberOfItems = request.nextUrl.searchParams.get("numberOfItems");
+  let pagination = {};
+
+  if (pageNumber && numberOfItems) {
+    pagination = {
+      skip: parseInt(pageNumber) * parseInt(numberOfItems),
+      take: parseInt(numberOfItems),
     };
   }
 
@@ -31,9 +62,16 @@ export async function GET(request: NextRequest) {
         name: "asc",
       },
     },
+    ...pagination,
   });
 
-  return NextResponse.json({ data: lectureGroups, status: true });
+  const lectureGroupCount = await prisma.lectureGroup.count({ where });
+
+  return NextResponse.json({
+    data: lectureGroups,
+    status: true,
+    count: lectureGroupCount,
+  });
 }
 
 export async function POST(request: NextRequest) {

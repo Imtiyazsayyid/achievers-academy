@@ -24,15 +24,18 @@ import toast from "react-hot-toast";
 import SearchBar from "@/app/components/SearchBar";
 import GoBack from "@/app/components/GoBack";
 import DeleteConfirmation from "@/app/components/DeleteConfirmation";
+import StatusFilter from "@/app/components/filters/StatusFilter";
 
 const GradesPage = () => {
   const [grades, setGrades] = useState<Grade[]>();
   const [searchText, setSearchText] = useState("");
+  const [status, setStatus] = useState("all");
 
   const getAllGrades = async () => {
     const res = await axios.get("/api/grade", {
       params: {
         searchText,
+        status,
       },
     });
     setGrades(res.data.data);
@@ -57,13 +60,13 @@ const GradesPage = () => {
 
   useEffect(() => {
     getAllGrades();
-  }, [searchText]);
+  }, [searchText, status]);
 
   return (
-    <Flex className="h-[90vh] w-full">
+    <Flex className="min-h-[90vh] w-full">
       <Flex
         direction={"column"}
-        m={"9"}
+        my={"9"}
         p="5"
         px="8"
         className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
@@ -72,20 +75,26 @@ const GradesPage = () => {
         <Heading mb={"6"} mt="5">
           Grades
         </Heading>
-        <Flex justify={"between"} mb={"2"}>
+        <Flex justify={"between"} mb={"2"} align={"end"}>
           <SearchBar
             placeholder={"Search For Grade"}
             searchText={searchText}
             setSearchText={setSearchText}
           />
-          <GradeDialog
-            title="Add Grade"
-            gradeStatus={true}
-            buttonIcon={<PlusIcon />}
-            buttonText={"Add New"}
-            type="new"
-            getAllGrades={getAllGrades}
-          />
+          <Flex gap={"2"} align={"end"}>
+            <StatusFilter
+              status={status}
+              setStatus={(status) => setStatus(status)}
+            />
+            <GradeDialog
+              title="Add Grade"
+              gradeStatus={true}
+              buttonIcon={<PlusIcon />}
+              buttonText={"Add New"}
+              type="new"
+              getAllGrades={getAllGrades}
+            />
+          </Flex>
         </Flex>
 
         {/* Table */}

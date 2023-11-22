@@ -5,12 +5,20 @@ export async function GET(request: NextRequest) {
   let where: any = {};
 
   const searchText = request.nextUrl.searchParams.get("searchText");
+  const status = request.nextUrl.searchParams.get("status");
 
   if (searchText) {
     where = {
       name: {
         contains: searchText,
       },
+    };
+  }
+
+  if (status && status != "all") {
+    where = {
+      ...where,
+      status: status === "active" ? true : false,
     };
   }
 
