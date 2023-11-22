@@ -81,14 +81,12 @@ const LectureGroupView = ({ params }: Props) => {
   }, [searchText, pagination.numberOfItems, pagination.pageNumber, status]);
 
   return (
-    <Flex className="min-h-[90vh] w-full" direction={"column"}>
+    <Flex className="w-full min-h-full py-20" direction={"column"}>
       <Flex
         direction={"column"}
-        mt={"9"}
-        mb={"2"}
         p="5"
         px="8"
-        className="bg-white border rounded-lg shadow-lg h-[70vh] w-full"
+        className="bg-white border rounded-lg shadow-lg h-full w-full"
       >
         <GoBack />
         <Heading mb={"6"} mt="5">

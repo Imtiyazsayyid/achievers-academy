@@ -57,12 +57,11 @@ const NewTopicPage = ({ params }: Props) => {
   };
 
   return (
-    <Flex className="min-h-[90vh] w-full">
+    <Flex className="w-full min-h-full py-20">
       <Flex
         direction={"column"}
-        m={"9"}
         p="8"
-        className="bg-white border rounded-lg shadow-lg min-h-[full] w-full overflow-y-scroll"
+        className="bg-white border rounded-lg shadow-lg h-full w-full overflow-y-scroll"
         gap={"5"}
       >
         <Heading mb={"4"}>Add Topic</Heading>

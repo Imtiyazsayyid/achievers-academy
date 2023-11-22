@@ -28,6 +28,8 @@ import DeleteConfirmation from "@/app/components/DeleteConfirmation";
 import { useRouter } from "next/navigation";
 import Pagination from "@/app/components/Pagination";
 import StatusFilter from "@/app/components/filters/StatusFilter";
+import BoardFilter from "@/app/components/filters/BoardFilter";
+import GradeFilter from "@/app/components/filters/GradeFilter";
 
 type DetailedLectureGroup = LectureGroup & {
   subject: Subject & {
@@ -41,6 +43,8 @@ const LectureGroupsPage = () => {
   const [lectureGroups, setLectureGroups] = useState<DetailedLectureGroup[]>();
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState("all");
+  const [boardId, setBoardId] = useState("all");
+  const [gradeId, setGradeId] = useState("all");
 
   const [pagination, setPagination] = useState<{
     pageNumber: number;
@@ -60,6 +64,8 @@ const LectureGroupsPage = () => {
         pageNumber: pagination.pageNumber,
         numberOfItems: pagination.numberOfItems,
         status,
+        filterBoardId: boardId,
+        filterGradeId: gradeId,
       },
     });
     setLectureGroups(res.data.data);
@@ -88,17 +94,22 @@ const LectureGroupsPage = () => {
 
   useEffect(() => {
     getAllLectureGroups();
-  }, [searchText, pagination.numberOfItems, pagination.pageNumber, status]);
+  }, [
+    searchText,
+    pagination.numberOfItems,
+    pagination.pageNumber,
+    status,
+    boardId,
+    gradeId,
+  ]);
 
   return (
-    <Flex className="min-h-[90vh] overflow-hidden" direction={"column"}>
+    <Flex className="w-full min-h-full py-20" direction={"column"}>
       <Flex
         direction={"column"}
-        mt={"9"}
-        mb={"2"}
         p="5"
         px="8"
-        className="bg-white border rounded-lg shadow-lg h-[70vh] w-full"
+        className="bg-white border rounded-lg shadow-lg h-full w-full"
       >
         <GoBack />
         <Heading mb={"6"} mt="5">
@@ -116,6 +127,14 @@ const LectureGroupsPage = () => {
             <StatusFilter
               status={status}
               setStatus={(status) => setStatus(status)}
+            />
+            <BoardFilter
+              boardId={boardId}
+              setBoardId={(boardId) => setBoardId(boardId)}
+            />
+            <GradeFilter
+              gradeId={gradeId}
+              setGradeId={(gradeId) => setGradeId(gradeId)}
             />
             <LectureGroupDialog
               title="Add Lecture Group"

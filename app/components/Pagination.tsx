@@ -43,7 +43,7 @@ const Pagination = ({ pagination, setPagination }: Props) => {
   if (maxPageNumber <= 1) return null;
 
   return (
-    <Flex className="w-full p-2 border" justify={"center"}>
+    <Flex className="w-full p-2" justify={"center"}>
       <Flex
         justify={"between"}
         align={"center"}

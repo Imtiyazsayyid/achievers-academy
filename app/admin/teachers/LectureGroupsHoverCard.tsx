@@ -32,6 +32,9 @@ const LectureGroupsHoverCard = ({ lectureGroups }: Props) => {
         </Text>
       </HoverCard.Trigger>
       <HoverCard.Content>
+        {lectureGroups.length === 0 && (
+          <p className="text-xs">No Lecture Groups Assigned</p>
+        )}
         {lectureGroups.map((lectureGroup, index) => (
           <Flex className="mb-1 border p-2 rounded-lg" key={index}>
             <Text className="text-xs">{lectureGroup}</Text>

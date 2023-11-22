@@ -6,6 +6,8 @@ export async function GET(request: NextRequest) {
 
   const searchText = request.nextUrl.searchParams.get("searchText");
   const status = request.nextUrl.searchParams.get("status");
+  const boardId = request.nextUrl.searchParams.get("boardId");
+  const gradeId = request.nextUrl.searchParams.get("gradeId");
   const id = request.nextUrl.searchParams.get("id");
 
   if (searchText) {
@@ -27,6 +29,24 @@ export async function GET(request: NextRequest) {
     where = {
       ...where,
       status: status === "active" ? true : false,
+    };
+  }
+
+  if (boardId && boardId != "all") {
+    where = {
+      ...where,
+      board: {
+        id: parseInt(boardId),
+      },
+    };
+  }
+
+  if (gradeId && gradeId != "all") {
+    where = {
+      ...where,
+      grade: {
+        id: parseInt(gradeId),
+      },
     };
   }
 

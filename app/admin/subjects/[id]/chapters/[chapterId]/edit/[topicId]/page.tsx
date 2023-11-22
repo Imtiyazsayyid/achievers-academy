@@ -88,12 +88,11 @@ const EditTopicPage = ({ params }: Props) => {
   };
 
   return (
-    <Flex className="min-h-[90vh] w-full">
+    <Flex className="w-full min-h-full py-20">
       <Flex
         direction={"column"}
-        m={"9"}
         p="8"
-        className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
+        className="bg-white border rounded-lg shadow-lg h-full w-full"
       >
         <Heading mb={"8"}>Add Topic</Heading>
         <Flex gap={"5"} direction={"column"}>

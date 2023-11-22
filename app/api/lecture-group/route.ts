@@ -8,6 +8,8 @@ export async function GET(request: NextRequest) {
   const boardId = request.nextUrl.searchParams.get("boardId");
   const gradeId = request.nextUrl.searchParams.get("gradeId");
   const status = request.nextUrl.searchParams.get("status");
+  const filterBoardId = request.nextUrl.searchParams.get("filterBoardId");
+  const filterGradeId = request.nextUrl.searchParams.get("filterGradeId");
 
   if (searchText) {
     where = {
@@ -23,6 +25,24 @@ export async function GET(request: NextRequest) {
       subject: {
         board_id: parseInt(boardId),
         grade_id: parseInt(gradeId),
+      },
+    };
+  }
+
+  if (filterBoardId && filterBoardId != "all") {
+    where = {
+      ...where,
+      subject: {
+        board_id: parseInt(filterBoardId),
+      },
+    };
+  }
+
+  if (filterGradeId && filterGradeId != "all") {
+    where = {
+      ...where,
+      subject: {
+        grade_id: parseInt(filterGradeId),
       },
     };
   }

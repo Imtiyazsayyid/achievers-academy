@@ -30,7 +30,7 @@ const GradeFilter = ({ gradeId, setGradeId }: Props) => {
         defaultValue={gradeId.toString()}
         onValueChange={(value) => setGradeId(value)}
       >
-        <Select.Trigger className="w-28" />
+        <Select.Trigger className="w-48" />
         <Select.Content>
           <Select.Group>
             <Select.Label>Grade</Select.Label>

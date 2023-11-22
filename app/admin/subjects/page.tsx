@@ -100,14 +100,12 @@ const SubjectsPage = () => {
   }, [pagination.numberOfItems, pagination.pageNumber]);
 
   return (
-    <Flex className="min-h-[90vh] w-full" gap={"2"} direction={"column"}>
+    <Flex className="w-full min-h-full py-20" direction={"column"}>
       <Flex
         direction={"column"}
-        mt={"9"}
-        mb="0"
         p="5"
         px="8"
-        className="bg-white border rounded-lg shadow-lg h-[70vh] w-full"
+        className="bg-white border rounded-lg shadow-lg h-full w-full"
       >
         <GoBack />
         <Heading mt={"5"}>Subjects</Heading>

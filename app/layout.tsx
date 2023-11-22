@@ -40,12 +40,9 @@ export default function RootLayout({
         />
       </head>
       {/* poppins.variable + "  */}
-      <body className={"min-h-screen"}>
+      <body className={""}>
         <Theme accentColor="violet">
-          <main className="bg-slate-100 min-h-screen">
-            <Toaster />
-            {children}
-          </main>
+          <main className="bg-slate-100 h-screen">{children}</main>
         </Theme>
       </body>
     </html>
