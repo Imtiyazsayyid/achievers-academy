@@ -5,3 +5,7 @@
 body {
   font-family: "poppins";
 }
+
+.rdrDefinedRangesWrapper {
+  display: none;
+}

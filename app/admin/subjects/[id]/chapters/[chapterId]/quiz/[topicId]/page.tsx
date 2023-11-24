@@ -12,14 +12,13 @@ interface Props {
 
 const page = ({ params }: Props) => {
   return (
-    <Flex className="w-full min-h-full py-20">
+    <Flex className="w-full min-h-full py-5">
       <Flex
         direction={"column"}
         p="5"
         px="8"
         className="bg-white border rounded-lg shadow-lg h-[full] w-full"
       >
-        <GoBack />
         <Heading mt={"5"} mb={"4"}>
           Quiz
         </Heading>

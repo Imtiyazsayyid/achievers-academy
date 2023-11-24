@@ -2,15 +2,22 @@
 import { Button, Flex, Heading, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { RiGraduationCapFill } from "react-icons/ri";
 import { FaBookOpenReader } from "react-icons/fa6";
 import { PiMedalFill } from "react-icons/pi";
 import { FaUser } from "react-icons/fa6";
 import { PiChalkboardTeacherFill } from "react-icons/pi";
 import { FaUsers } from "react-icons/fa";
+import { IoHome } from "react-icons/io5";
+import { ArrowLeftIcon, Cross1Icon } from "@radix-ui/react-icons";
 
 const Links = [
+  {
+    label: "Home",
+    link: "/admin",
+    icon: <IoHome className="text-xl " />,
+  },
   {
     label: "Boards",
     link: "/admin/boards",
@@ -44,7 +51,17 @@ const Links = [
 ];
 
 const VerticalNavBar = () => {
-  //   return <Button>Open SideBar</Button>;
+  const [isActive, setActive] = useState(true);
+
+  if (!isActive)
+    return (
+      <Button
+        className="fixed top-5 left-[-25px]"
+        onClick={() => setActive(true)}
+      >
+        <ArrowLeftIcon />
+      </Button>
+    );
   const handleClick = (link: string) => {
     router.push(link);
   };
@@ -53,7 +70,11 @@ const VerticalNavBar = () => {
 
   const router = useRouter();
   return (
-    <Flex className="w-[25%] p-5">
+    <Flex className="w-[25%] py-5 pl-5">
+      <Cross1Icon
+        className="relative left-[90%] top-5 cursor-pointer"
+        onClick={() => setActive(false)}
+      />
       <Flex
         className=" bg-white border shadow-lg rounded-lg w-full p-5"
         direction={"column"}
@@ -65,7 +86,7 @@ const VerticalNavBar = () => {
           <Flex
             key={link}
             onClick={() => handleClick(link)}
-            className={`h-16 rounded-none hover:shadow-lg pl-5 hover:rounded-xl cursor-pointer ${
+            className={`h-16 rounded-none hover:shadow-md pl-5 hover:rounded-xl cursor-pointer ${
               currentPathName === link &&
               "bg-[var(--violet-a11)] text-white rounded-xl"
             }`}

@@ -1,42 +1,39 @@
-import { Container, Flex } from "@radix-ui/themes";
+"use client";
+import { Admin } from "@prisma/client";
+import { Avatar, Container, Flex, Heading, Text } from "@radix-ui/themes";
+import axios from "axios";
 import Link from "next/link";
-import React from "react";
-import { GiPirateHook } from "react-icons/gi";
-
-const Links = [
-  { label: "Boards", link: "/admin/boards" },
-  { label: "Grades", link: "/admin/grades" },
-  { label: "Subjects", link: "/admin/subjects" },
-  { label: "Students", link: "/admin/students" },
-  { label: "Teachers", link: "/admin/teachers" },
-  { label: "Lecture Groups", link: "/admin/lecture-groups" },
-];
-
+import React, { useEffect, useState } from "react";
+import GoBack from "../components/GoBack";
 const NavBar = () => {
+  const [adminUser, setAdminUser] = useState<Admin>();
+
+  const getAdminUser = async () => {
+    const res = await axios.get("/api/admin/1");
+    console.log(res);
+    setAdminUser(res.data.data);
+  };
+
+  useEffect(() => {
+    getAdminUser();
+  });
+
   return (
-    <Flex className="h-14 border-b bg-white">
-      <Container>
-        <Flex className="h-14 border-b">
-          {/* <Flex className="w-1/6" align={"center"} justify={"center"}></Flex> */}
-          <Flex
-            className="w-full"
-            align={"center"}
-            justify={"center"}
-            gap={"9"}
-          >
-            {Links.map(({ label, link }) => (
-              <Link
-                href={link}
-                className="hover:text-[var(--violet-a11)]"
-                key={link}
-              >
-                {label}
-              </Link>
-            ))}
-          </Flex>
-          {/* <Flex className="w-1/6"></Flex> */}
+    <Flex
+      className="bg-white border rounded-lg shadow-md h-[75px] mr-5 px-4"
+      justify={"between"}
+      align={"center"}
+    >
+      <GoBack />
+      <Flex gap={"3"}>
+        <Flex direction={"column"} justify={"end"} align={"end"}>
+          <Heading size={"2"}>{adminUser?.name}</Heading>
+          <Text size="1" className="text-xs text-slate-500">
+            Admin
+          </Text>
         </Flex>
-      </Container>
+        <Avatar fallback={adminUser?.name[0] || "?"} radius="full" />
+      </Flex>
     </Flex>
   );
 };

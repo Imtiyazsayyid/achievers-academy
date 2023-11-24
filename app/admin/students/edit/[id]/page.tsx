@@ -171,7 +171,6 @@ const EditStudentForm = ({ params }: Props) => {
         px="8"
         className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
       >
-        <GoBack />
         <Heading mb={"6"} mt="5">
           Update Student
         </Heading>

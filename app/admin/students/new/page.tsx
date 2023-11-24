@@ -122,14 +122,13 @@ const StudentForm = () => {
   }, [studentDetails?.board_id, studentDetails?.grade_id]);
 
   return (
-    <Flex className="h-fit w-full py-20" direction={"column"} gap={"2"}>
+    <Flex className="h-fit w-full py-5" direction={"column"} gap={"2"}>
       <Flex
         direction={"column"}
         p="5"
         px="8"
         className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
       >
-        <GoBack />
         <Heading mb={"6"} mt="5">
           Add New Student
         </Heading>

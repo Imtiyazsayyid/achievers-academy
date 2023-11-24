@@ -101,14 +101,13 @@ const StudentsPage = () => {
   ]);
 
   return (
-    <Flex className="w-full min-h-full py-20" direction={"column"}>
+    <Flex className="w-full min-h-full mr-5" direction={"column"}>
       <Flex
         direction={"column"}
         p="5"
         px="8"
         className="bg-white border rounded-lg shadow-lg h-full w-full"
       >
-        <GoBack />
         <Heading mb={"6"} mt="5">
           All Students
         </Heading>

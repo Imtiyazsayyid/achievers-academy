@@ -26,7 +26,11 @@ export async function GET(request: NextRequest) {
     where,
   });
 
-  return NextResponse.json({ data: boards, status: true });
+  const boardCount = await prisma.board.count({
+    where,
+  });
+
+  return NextResponse.json({ data: boards, status: true, count: boardCount });
 }
 
 export async function POST(request: NextRequest) {

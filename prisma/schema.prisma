@@ -227,6 +227,17 @@ model Teacher {
   updated_at DateTime @default(now())
 }
 
+model Admin {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
 // model TeacherSubjectMapper {
 //   id         Int     @id @default(autoincrement())
 //   subject_id Int

@@ -26,7 +26,11 @@ export async function GET(request: NextRequest) {
     where,
   });
 
-  return NextResponse.json({ data: grades, status: true });
+  const gradeCount = await prisma.grade.count({
+    where,
+  });
+
+  return NextResponse.json({ data: grades, status: true, count: gradeCount });
 }
 
 export async function POST(request: NextRequest) {

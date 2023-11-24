@@ -63,14 +63,13 @@ const GradesPage = () => {
   }, [searchText, status]);
 
   return (
-    <Flex className="w-full min-h-full py-20">
+    <Flex className="w-full min-h-full mr-5">
       <Flex
         direction={"column"}
         p="5"
         px="8"
         className="bg-white border rounded-lg shadow-lg min-h-[full] w-full"
       >
-        <GoBack />
         <Heading mb={"6"} mt="5">
           Grades
         </Heading>

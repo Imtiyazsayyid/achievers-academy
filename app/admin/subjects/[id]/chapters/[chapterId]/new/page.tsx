@@ -57,7 +57,7 @@ const NewTopicPage = ({ params }: Props) => {
   };
 
   return (
-    <Flex className="w-full min-h-full py-20">
+    <Flex className="w-full min-h-full py-5">
       <Flex
         direction={"column"}
         p="8"

@@ -1,6 +1,7 @@
 "use client";
 import StatusBadge from "@/app/components/StatusBadge";
 import { Pencil2Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
+import ScaleLoader from "react-spinners/ScaleLoader";
 import {
   Button,
   Dialog,
@@ -33,6 +34,7 @@ const BoardsPage = () => {
         status,
       },
     });
+
     setBoards(res.data.data);
   };
 
@@ -58,18 +60,13 @@ const BoardsPage = () => {
   }, [searchText, status]);
 
   return (
-    <Flex
-      className="w-full min-h-full py-20"
-      justify={"center"}
-      align={"start"}
-    >
+    <Flex className="w-full min-h-full mr-5" justify={"center"} align={"start"}>
       <Flex
         direction={"column"}
         p="5"
         px="8"
         className="bg-white border rounded-lg shadow-lg h-full w-full"
       >
-        <GoBack />
         <Heading mt={"5"}>Boards</Heading>
         <Flex justify={"between"} mb={"2"} mt={"6"} align={"end"}>
           <SearchBar
