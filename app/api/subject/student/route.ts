@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
   if (searchText) {
     where = {
       subject: {
+        status: true,
         name: {
           contains: searchText,
         },
@@ -24,9 +25,6 @@ export async function GET(request: NextRequest) {
   if (onlyActive) {
     where = {
       ...where,
-      subject: {
-        status: true,
-      },
     };
   }
 
@@ -36,7 +34,6 @@ export async function GET(request: NextRequest) {
     },
     where: {
       student_id: parseInt(studentId),
-
       ...where,
     },
   });

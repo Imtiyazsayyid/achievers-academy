@@ -2,11 +2,12 @@ import { Badge } from "@radix-ui/themes";
 import React from "react";
 
 interface Props {
+  prefix?: string;
   score: number;
   outOf: number;
 }
 
-const ScorePercentage = ({ score, outOf }: Props) => {
+const ScorePercentage = ({ score, outOf, prefix }: Props) => {
   const percentage = (score / outOf) * 100;
 
   const getColor = (percentage: number): "red" | "orange" | "green" => {
@@ -24,7 +25,7 @@ const ScorePercentage = ({ score, outOf }: Props) => {
 
   return (
     <Badge className="w-fit" color={getColor(percentage)}>
-      {percentage.toFixed(2)} %
+      {prefix} {percentage.toFixed(2)} %
     </Badge>
   );
 };

@@ -4,6 +4,7 @@ import StatusBadge from "@/app/components/StatusBadge";
 import { QuizQuestion, QuizQuestionOption, Topic } from "@prisma/client";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import {
+  AlertDialog,
   Badge,
   Box,
   Button,
@@ -16,6 +17,7 @@ import {
   TextArea,
 } from "@radix-ui/themes";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -95,11 +97,13 @@ const QuizPage = ({ params }: Props) => {
     location.reload();
   };
 
+  const router = useRouter();
+
   const handleSubmit = async () => {
     setSubmitted(true);
     const res = await axios.post("/api/quiz/submitted", {
       topicId: params.id,
-      studentId: 1,
+      studentId: 37,
       score: (getCorrectAnswerCount() / quizAnswers.length) * 100,
     });
 
@@ -115,10 +119,7 @@ const QuizPage = ({ params }: Props) => {
 
   return (
     <Flex className="w-full h-full p-10">
-      <Flex
-        className="border w-full bg-white rounded-lg shadow-sm p-10"
-        direction={"column"}
-      >
+      <Flex className="w-full bg-white rounded-lg p-10" direction={"column"}>
         <Heading mb={"5"} align={"center"}>
           {topic?.name} Quiz
         </Heading>
@@ -236,9 +237,32 @@ const QuizPage = ({ params }: Props) => {
           ))}
         </Flex>
         <Flex p={"2"} justify={"end"} gap={"2"}>
-          <Button variant="soft" onClick={handleReset}>
-            Reset
-          </Button>
+          <AlertDialog.Root>
+            <AlertDialog.Trigger>
+              <Button variant="soft">Reset</Button>
+            </AlertDialog.Trigger>
+            <AlertDialog.Content style={{ maxWidth: 450 }}>
+              <AlertDialog.Title>Reset Quiz</AlertDialog.Title>
+              <AlertDialog.Description size="2">
+                Are you sure you want to retake this test.
+                <br /> Your Current Progress will be lost
+              </AlertDialog.Description>
+
+              <Flex gap="3" mt="4" justify="end">
+                <AlertDialog.Cancel>
+                  <Button variant="soft" color="gray">
+                    Cancel
+                  </Button>
+                </AlertDialog.Cancel>
+                <AlertDialog.Action>
+                  <Button variant="solid" onClick={handleReset}>
+                    Reset
+                  </Button>
+                </AlertDialog.Action>
+              </Flex>
+            </AlertDialog.Content>
+          </AlertDialog.Root>
+
           <Button variant="soft" color="green" onClick={handleSubmit}>
             Submit
           </Button>

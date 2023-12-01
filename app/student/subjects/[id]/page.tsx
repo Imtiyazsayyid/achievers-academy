@@ -1,6 +1,6 @@
 "use client";
 import SearchBar from "@/app/components/SearchBar";
-import { Chapter, Topic } from "@prisma/client";
+import { Chapter, Subject, Topic } from "@prisma/client";
 import { Avatar, Text, Button, Flex, Heading } from "@radix-ui/themes";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -19,7 +19,18 @@ type DetailedChapter = Chapter & {
 const SubjectDetailPage = ({ params }: Props) => {
   const [searchText, setSearchText] = useState("");
   const [chapters, setChapters] = useState<DetailedChapter[]>();
+  const [subject, setSubject] = useState<Subject>();
   const router = useRouter();
+
+  const getSubject = async () => {
+    const res = await axios.get("/api/subject", {
+      params: {
+        subjectId: params.id,
+      },
+    });
+
+    setSubject(res.data.data[0]);
+  };
 
   const getAllChapters = async () => {
     const res = await axios.get("/api/chapter", {
@@ -33,15 +44,13 @@ const SubjectDetailPage = ({ params }: Props) => {
 
   useEffect(() => {
     getAllChapters();
+    getSubject();
   }, []);
 
   return (
     <Flex className="w-full h-full p-10">
-      <Flex
-        className="border w-full bg-white rounded-lg shadow-sm p-10"
-        direction={"column"}
-      >
-        <Heading mb={"7"}>Chapters</Heading>
+      <Flex className="w-full bg-white rounded-lg p-10" direction={"column"}>
+        <Heading mb={"7"}>{subject?.name} Chapters</Heading>
         <Flex mb={"2"}>
           <SearchBar
             placeholder="Find Your Subject"

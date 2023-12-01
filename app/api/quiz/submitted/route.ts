@@ -15,3 +15,28 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ data: quizAttempt, status: true });
 }
+
+export async function GET(request: NextRequest) {
+  const topicId = request.nextUrl.searchParams.get("topicId");
+  const student_id = request.nextUrl.searchParams.get("studentId");
+
+  if (!student_id || !topicId) {
+    return NextResponse.json({ error: "Send All Details", status: false });
+  }
+
+  const quizAttempts = await prisma.quizAttempts.findMany({
+    include: {
+      topic: {
+        include: {
+          chapter: true,
+        },
+      },
+    },
+    where: {
+      topic_id: parseInt(topicId),
+      student_id: parseInt(student_id),
+    },
+  });
+
+  return NextResponse.json({ data: quizAttempts, status: true });
+}

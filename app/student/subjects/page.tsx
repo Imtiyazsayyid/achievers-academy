@@ -19,7 +19,7 @@ const page = () => {
     const res = await axios.get("/api/subject/student", {
       params: {
         searchText,
-        studentId: 24,
+        studentId: 37,
         onlyActive: true,
       },
     });
@@ -33,10 +33,7 @@ const page = () => {
 
   return (
     <Flex className="w-full h-full p-10">
-      <Flex
-        className="border w-full bg-white rounded-lg shadow-sm p-10"
-        direction={"column"}
-      >
+      <Flex className="w-full bg-white rounded-lg p-10" direction={"column"}>
         <Heading mb={"7"}>Your Subjects</Heading>
         <Flex mb={"2"}>
           <SearchBar

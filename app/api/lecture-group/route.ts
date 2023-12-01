@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
   const searchText = request.nextUrl.searchParams.get("searchText");
   const boardId = request.nextUrl.searchParams.get("boardId");
   const gradeId = request.nextUrl.searchParams.get("gradeId");
+  const teacherId = request.nextUrl.searchParams.get("teacherId");
   const status = request.nextUrl.searchParams.get("status");
   const filterBoardId = request.nextUrl.searchParams.get("filterBoardId");
   const filterGradeId = request.nextUrl.searchParams.get("filterGradeId");
@@ -44,6 +45,13 @@ export async function GET(request: NextRequest) {
       subject: {
         grade_id: parseInt(filterGradeId),
       },
+    };
+  }
+
+  if (teacherId) {
+    where = {
+      ...where,
+      teacher_id: parseInt(teacherId),
     };
   }
 

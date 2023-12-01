@@ -1,6 +1,6 @@
 "use client";
 import SearchBar from "@/app/components/SearchBar";
-import { Topic } from "@prisma/client";
+import { Chapter, Topic } from "@prisma/client";
 import { Avatar, Button, Flex, Grid, Heading, Text } from "@radix-ui/themes";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,21 @@ interface Props {
 const TopicsPage = ({ params }: Props) => {
   const [topics, setTopics] = useState<Topic[]>();
   const [searchText, setSearchText] = useState("");
+  const [chapter, setChapter] = useState<Chapter>();
   const router = useRouter();
+
+  const getChapter = async () => {
+    const res = await axios.get("/api/chapter", {
+      params: {
+        chapterId: params.chapterId,
+        subjectId: params.id,
+      },
+    });
+
+    // console.log(res);
+
+    setChapter(res.data.data[0]);
+  };
 
   const getAllTopics = async () => {
     const res = await axios.get("/api/topic", {
@@ -31,15 +45,13 @@ const TopicsPage = ({ params }: Props) => {
 
   useEffect(() => {
     getAllTopics();
+    getChapter();
   }, [searchText]);
 
   return (
     <Flex className="w-full h-full p-10">
-      <Flex
-        className="border w-full bg-white rounded-lg shadow-sm p-10"
-        direction={"column"}
-      >
-        <Heading mb={"7"}>Your Topics</Heading>
+      <Flex className=" w-full bg-white  p-10" direction={"column"}>
+        <Heading mb={"7"}>{chapter?.name} Topics</Heading>
         <Flex mb={"2"}>
           <SearchBar
             placeholder="Find Your Subject"
@@ -48,7 +60,11 @@ const TopicsPage = ({ params }: Props) => {
           />
         </Flex>
 
-        <Flex className="border h-[60vh] rounded-lg bg-slate-100 p-4" gap={"4"}>
+        <Flex
+          className="border h-[60vh] rounded-lg bg-slate-100 p-4 overflow-hidden overflow-y-scroll"
+          gap={"2"}
+          direction={"column"}
+        >
           {topics?.map((topic) => (
             <Flex
               className="border h-16 w-full shadow-lg rounded-lg bg-white p-3"

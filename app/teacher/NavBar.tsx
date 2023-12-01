@@ -15,16 +15,15 @@ import GoBack from "../components/GoBack";
 import { GearIcon, PersonIcon } from "@radix-ui/react-icons";
 import { IoLogOutOutline } from "react-icons/io5";
 const NavBar = () => {
-  const [adminUser, setAdminUser] = useState<Admin>();
+  const [teacher, setTeacher] = useState<Admin>();
 
-  const getAdminUser = async () => {
-    const res = await axios.get("/api/admin/1");
-    console.log(res);
-    setAdminUser(res.data.data);
+  const getTeacher = async () => {
+    const res = await axios.get("/api/teacher/7");
+    setTeacher(res.data.data);
   };
 
   useEffect(() => {
-    getAdminUser();
+    getTeacher();
   }, []);
 
   return (
@@ -36,9 +35,9 @@ const NavBar = () => {
       <GoBack />
       <Flex gap={"3"}>
         <Flex direction={"column"} justify={"end"} align={"end"}>
-          <Heading size={"2"}>{adminUser?.name}</Heading>
+          <Heading size={"2"}>{teacher?.name}</Heading>
           <Text size="1" className="text-xs text-slate-500">
-            Admin
+            Teacher
           </Text>
         </Flex>
 
@@ -46,7 +45,7 @@ const NavBar = () => {
           <HoverCard.Trigger>
             <Flex>
               <Avatar
-                fallback={adminUser?.name[0] || "?"}
+                fallback={teacher?.name[0] || "?"}
                 radius="full"
                 className="cursor-pointer"
               />

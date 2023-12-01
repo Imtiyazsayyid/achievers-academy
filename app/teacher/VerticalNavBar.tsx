@@ -15,37 +15,22 @@ import { ArrowLeftIcon, Cross1Icon } from "@radix-ui/react-icons";
 const Links = [
   {
     label: "Home",
-    link: "/admin",
+    link: "/teacher",
     icon: <IoHome className="text-xl " />,
   },
-  {
-    label: "Boards",
-    link: "/admin/boards",
-    icon: <RiGraduationCapFill className="text-xl " />,
-  },
-  {
-    label: "Grades",
-    link: "/admin/grades",
-    icon: <PiMedalFill className="text-xl " />,
-  },
-  {
-    label: "Subjects",
-    link: "/admin/subjects",
-    icon: <FaBookOpenReader className="text-lg " />,
-  },
-  {
-    label: "Students",
-    link: "/admin/students",
-    icon: <FaUser className="text-lg " />,
-  },
-  {
-    label: "Teachers",
-    link: "/admin/teachers",
-    icon: <PiChalkboardTeacherFill className="text-xl " />,
-  },
+  // {
+  //   label: "Subjects",
+  //   link: "/teacher/subjects",
+  //   icon: <FaBookOpenReader className="text-lg " />,
+  // },
+  // {
+  //   label: "Students",
+  //   link: "/teacher/students",
+  //   icon: <FaUser className="text-lg " />,
+  // },
   {
     label: "Lecture Groups",
-    link: "/admin/lecture-groups",
+    link: "/teacher/lecture-groups",
     icon: <FaUsers className="text-2xl" />,
   },
 ];

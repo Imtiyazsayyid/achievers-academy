@@ -43,6 +43,23 @@ export async function GET(request: NextRequest) {
   const StudentLectureGroup = await prisma.studentLectureGroupMapper.findMany({
     include: {
       student: true,
+      lecture_group: {
+        include: {
+          subject: {
+            include: {
+              chapters: {
+                include: {
+                  topics: {
+                    include: {
+                      students_completed_topic: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     where: {
       lecture_group_id: parseInt(lectureGroupId),

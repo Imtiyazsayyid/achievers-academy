@@ -81,8 +81,8 @@ model Topic {
   chapter_id     Int
   chapter        Chapter        @relation(fields: [chapter_id], references: [id])
   quiz_questions QuizQuestion[]
-  // quiz_answers   QuizQuestionAnswer[]
   quiz_attempts  QuizAttempts[]
+  students_completed_topic CompletedTopics[]
 
   status     Boolean  @default(true)
   created_at DateTime @default(now())
@@ -165,6 +165,7 @@ model Student {
   lectureGroups StudentLectureGroupMapper[]
   // quiz_answers  QuizQuestionAnswer[]
   quiz_attempts QuizAttempts[]
+  completed_topics CompletedTopics[]
 
   status     Boolean  @default(true)
   created_at DateTime @default(now())
@@ -236,6 +237,14 @@ model Admin {
   status     Boolean  @default(true)
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+}
+
+model CompletedTopics {
+  id       Int    @id @default(autoincrement())
+  student_id Int 
+  student Student @relation(fields: [student_id], references: [id])
+  topic_id  Int
+  topic Topic  @relation(fields: [topic_id], references: [id])
 }
 
 // model TeacherSubjectMapper {

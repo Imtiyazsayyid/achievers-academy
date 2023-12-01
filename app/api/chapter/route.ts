@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
   const searchText = request.nextUrl.searchParams.get("searchText");
   const subjectId = request.nextUrl.searchParams.get("subjectId");
   const status = request.nextUrl.searchParams.get("status");
+  const chapterId = request.nextUrl.searchParams.get("chapterId");
 
   if (!subjectId)
     return NextResponse.json({ error: "Send All Details", status: false });
@@ -16,6 +17,13 @@ export async function GET(request: NextRequest) {
       name: {
         contains: searchText,
       },
+    };
+  }
+
+  if (chapterId) {
+    where = {
+      ...where,
+      id: parseInt(chapterId),
     };
   }
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { GiPirateHook } from "react-icons/gi";
 
-const Links = [{ label: "Subjects", link: "/students/subjects" }];
+const Links = [{ label: "Subjects", link: "/student/subjects" }];
 
 const NavBar = () => {
   return (
