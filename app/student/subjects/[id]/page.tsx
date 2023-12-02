@@ -36,6 +36,7 @@ const SubjectDetailPage = ({ params }: Props) => {
     const res = await axios.get("/api/chapter", {
       params: {
         subjectId: params.id,
+        searchText,
       },
     });
 
@@ -45,7 +46,7 @@ const SubjectDetailPage = ({ params }: Props) => {
   useEffect(() => {
     getAllChapters();
     getSubject();
-  }, []);
+  }, [searchText]);
 
   return (
     <Flex className="w-full h-full p-10">
@@ -53,7 +54,7 @@ const SubjectDetailPage = ({ params }: Props) => {
         <Heading mb={"7"}>{subject?.name} Chapters</Heading>
         <Flex mb={"2"}>
           <SearchBar
-            placeholder="Find Your Subject"
+            placeholder="Find Chapter"
             searchText={searchText}
             setSearchText={(text) => setSearchText(text)}
           />

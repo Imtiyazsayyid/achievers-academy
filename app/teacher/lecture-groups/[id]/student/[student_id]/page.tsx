@@ -64,7 +64,6 @@ const LectureGroupView = ({ params }: Props) => {
       },
     });
 
-    console.log(res.data.data[0].lecture_group.subject.chapters);
     setChapters(res.data.data[0].lecture_group.subject.chapters);
   };
 
@@ -96,7 +95,11 @@ const LectureGroupView = ({ params }: Props) => {
           gap={"1"}
         >
           {chapters?.map((chapter) => (
-            <QuizDisplay chapter={chapter} key={chapter.id} />
+            <QuizDisplay
+              chapter={chapter}
+              key={chapter.id}
+              studentId={parseInt(params.student_id)}
+            />
           ))}
         </Flex>
       </Flex>

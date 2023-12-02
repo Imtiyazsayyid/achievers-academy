@@ -18,9 +18,10 @@ interface Props {
   chapter: Chapter & {
     topics: DetailedTopic[];
   };
+  studentId: number;
 }
 
-const QuizDisplay = ({ chapter }: Props) => {
+const QuizDisplay = ({ chapter, studentId }: Props) => {
   const [showDetails, setShowDetails] = useState(false);
 
   return (
@@ -55,7 +56,7 @@ const QuizDisplay = ({ chapter }: Props) => {
           className="h-60 minoverflow-hidden overflow-x-scroll p-2 rounded-lg w-full border bg-slate-50 mt-2"
         >
           {chapter.topics.map((topic) => (
-            <QuizDetailBox topic={topic} key={topic.id} />
+            <QuizDetailBox topic={topic} key={topic.id} studentId={studentId} />
           ))}
         </Flex>
       )}

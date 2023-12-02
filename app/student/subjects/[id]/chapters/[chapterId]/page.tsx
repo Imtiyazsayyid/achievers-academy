@@ -1,7 +1,15 @@
 "use client";
 import SearchBar from "@/app/components/SearchBar";
 import { Chapter, Topic } from "@prisma/client";
-import { Avatar, Button, Flex, Grid, Heading, Text } from "@radix-ui/themes";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Flex,
+  Grid,
+  Heading,
+  Text,
+} from "@radix-ui/themes";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -13,8 +21,17 @@ interface Props {
   };
 }
 
+interface StudentsCompletedTopic {
+  student_id: number;
+  topic_id: number;
+}
+
+type DetailedTopic = Topic & {
+  students_completed_topic: StudentsCompletedTopic[];
+};
+
 const TopicsPage = ({ params }: Props) => {
-  const [topics, setTopics] = useState<Topic[]>();
+  const [topics, setTopics] = useState<DetailedTopic[]>();
   const [searchText, setSearchText] = useState("");
   const [chapter, setChapter] = useState<Chapter>();
   const router = useRouter();
@@ -26,8 +43,6 @@ const TopicsPage = ({ params }: Props) => {
         subjectId: params.id,
       },
     });
-
-    // console.log(res);
 
     setChapter(res.data.data[0]);
   };
@@ -54,7 +69,7 @@ const TopicsPage = ({ params }: Props) => {
         <Heading mb={"7"}>{chapter?.name} Topics</Heading>
         <Flex mb={"2"}>
           <SearchBar
-            placeholder="Find Your Subject"
+            placeholder="Find Topic"
             searchText={searchText}
             setSearchText={(text) => setSearchText(text)}
           />
@@ -65,33 +80,52 @@ const TopicsPage = ({ params }: Props) => {
           gap={"2"}
           direction={"column"}
         >
-          {topics?.map((topic) => (
-            <Flex
-              className="border h-16 w-full shadow-lg rounded-lg bg-white p-3"
-              key={topic.id}
-              align={"center"}
-            >
-              <Flex align={"center"} gap={"3"} className="w-1/2">
-                <Avatar fallback={topic.name[0]} />
-                <Heading size={"2"}>{topic.name}</Heading>
+          {topics?.map((topic) => {
+            let students_completed = topic.students_completed_topic?.map(
+              (student) => student.student_id
+            );
+            return (
+              <Flex
+                className="border h-16 w-full shadow-lg rounded-lg bg-white p-3"
+                key={topic.id}
+                align={"center"}
+              >
+                <Flex align={"center"} gap={"3"} className="w-1/2">
+                  <Avatar fallback={topic.name[0]} />
+                  <Heading size={"2"}>{topic.name}</Heading>
+                </Flex>
+                {students_completed?.includes(37) ? (
+                  <Badge
+                    className="w-fit"
+                    color="blue"
+                    size={"1"}
+                    radius="full"
+                  >
+                    Complete
+                  </Badge>
+                ) : (
+                  <Badge className="w-fit" color="red" size={"1"} radius="full">
+                    Incomplete
+                  </Badge>
+                )}
+                <Flex className="w-1/2" justify={"end"} gap={"2"}>
+                  <Button
+                    variant="soft"
+                    color="green"
+                    onClick={() => router.push(`/student/study/${topic.id}`)}
+                  >
+                    Study
+                  </Button>
+                  <Button
+                    variant="soft"
+                    onClick={() => router.push(`/student/quiz/${topic.id}`)}
+                  >
+                    Take Quiz
+                  </Button>
+                </Flex>
               </Flex>
-              <Flex className="w-1/2" justify={"end"} gap={"2"}>
-                <Button
-                  variant="soft"
-                  color="green"
-                  onClick={() => router.push(`/student/study/${topic.id}`)}
-                >
-                  Study
-                </Button>
-                <Button
-                  variant="soft"
-                  onClick={() => router.push(`/student/quiz/${topic.id}`)}
-                >
-                  Take Quiz
-                </Button>
-              </Flex>
-            </Flex>
-          ))}
+            );
+          })}
         </Flex>
       </Flex>
     </Flex>

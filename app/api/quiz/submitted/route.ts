@@ -20,6 +20,8 @@ export async function GET(request: NextRequest) {
   const topicId = request.nextUrl.searchParams.get("topicId");
   const student_id = request.nextUrl.searchParams.get("studentId");
 
+  console.log({ student_id });
+
   if (!student_id || !topicId) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }

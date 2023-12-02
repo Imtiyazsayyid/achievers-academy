@@ -12,6 +12,7 @@ interface StudentsCompletedTopic {
 
 interface Props {
   topic: Topic & { students_completed_topic: StudentsCompletedTopic[] };
+  studentId: Number;
 }
 
 interface QuizAttempts {
@@ -19,7 +20,7 @@ interface QuizAttempts {
   created_at: string;
 }
 
-const QuizDetailBox = ({ topic }: Props) => {
+const QuizDetailBox = ({ topic, studentId }: Props) => {
   const [quizAttempts, setQuizAttempts] = useState<QuizAttempts[]>([]);
   const [growth, setGrowth] = useState<number | null>();
   const [studentsCompleted, setStudentsCompleted] = useState<number[]>();
@@ -28,12 +29,11 @@ const QuizDetailBox = ({ topic }: Props) => {
     const res = await axios.get("/api/quiz/submitted", {
       params: {
         topicId: topic.id,
-        studentId: 37,
+        studentId: studentId,
       },
     });
 
     const quizAttempts = res.data.data;
-    console.log(quizAttempts);
 
     if (quizAttempts.length === 0) setGrowth(null);
     if (quizAttempts.length === 1) setGrowth(quizAttempts[0].score);

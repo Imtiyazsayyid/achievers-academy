@@ -46,6 +46,9 @@ export async function GET(request: NextRequest) {
   }
 
   const topics = await prisma.topic.findMany({
+    include: {
+      students_completed_topic: true,
+    },
     where: {
       chapter_id: parseInt(chapter_id),
       ...where,
