@@ -7,6 +7,7 @@ import "../theme-config.css";
 import NavBar from "./admin/NavBar";
 import { Toaster } from "react-hot-toast";
 import GoBack from "./components/GoBack";
+import AuthProvider from "./auth/Provider";
 
 // const poppins = Poppins({
 //   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -42,7 +43,9 @@ export default function RootLayout({
       {/* poppins.variable + "  */}
       <body className={""}>
         <Theme accentColor="violet">
-          <main className="bg-slate-100 h-screen">{children}</main>
+          <AuthProvider>
+            <main className="bg-slate-100 h-screen">{children}</main>
+          </AuthProvider>
         </Theme>
       </body>
     </html>

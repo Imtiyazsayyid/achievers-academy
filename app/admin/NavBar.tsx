@@ -14,7 +14,11 @@ import React, { useEffect, useState } from "react";
 import GoBack from "../components/GoBack";
 import { GearIcon, PersonIcon } from "@radix-ui/react-icons";
 import { IoLogOutOutline } from "react-icons/io5";
+import { signOut, useSession } from "next-auth/react";
+import checkAdminAuth from "./helpers/check-auth";
 const NavBar = () => {
+  checkAdminAuth();
+
   const [adminUser, setAdminUser] = useState<Admin>();
 
   const getAdminUser = async () => {
@@ -73,6 +77,7 @@ const NavBar = () => {
               gap={"2"}
               align={"center"}
               className="cursor-pointer hover:bg-[var(--violet-a3)] px-5 py-1 rounded-lg hover:text-[var(--violet-a11)]"
+              onClick={() => signOut()}
             >
               <IoLogOutOutline />
               <Text>Logout</Text>
