@@ -1,5 +1,6 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import isAdmin from "../helpers/authentication";
 
 export async function GET(request: NextRequest) {
   let where: any = {};
@@ -34,6 +35,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: "You are not Admin", status: false });
+  }
+
   const body = await request.json();
 
   if (!body.gradeName && !body.gradeShortForm) {
@@ -51,6 +56,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: "You are not Admin", status: false });
+  }
   const body = await request.json();
 
   if (
@@ -76,6 +84,9 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: "You are not Admin", status: false });
+  }
   const id = request.nextUrl.searchParams.get("id");
   if (!id) {
     return NextResponse.json({ error: "Send All Details", status: false });

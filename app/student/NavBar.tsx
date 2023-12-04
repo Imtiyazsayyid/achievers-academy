@@ -27,7 +27,7 @@ const NavBar = () => {
             ))}
           </Flex>
           <Flex className="w-1/5">
-            <Text onClick={() => signOut()}></Text>
+            <Text onClick={() => signOut()}>Log out</Text>
           </Flex>
         </Flex>
       </Container>

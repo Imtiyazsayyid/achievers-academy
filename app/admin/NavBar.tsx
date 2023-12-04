@@ -21,15 +21,18 @@ const NavBar = () => {
 
   const [adminUser, setAdminUser] = useState<Admin>();
 
+  const { status, data } = useSession();
+
   const getAdminUser = async () => {
-    const res = await axios.get("/api/admin/1");
-    console.log(res);
-    setAdminUser(res.data.data);
+    if (data?.user.id) {
+      const res = await axios.get("/api/admin/" + data?.user.id);
+      setAdminUser(res.data.data);
+    }
   };
 
   useEffect(() => {
     getAdminUser();
-  }, []);
+  }, [data]);
 
   return (
     <Flex

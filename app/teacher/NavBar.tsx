@@ -15,20 +15,24 @@ import GoBack from "../components/GoBack";
 import { GearIcon, PersonIcon } from "@radix-ui/react-icons";
 import { IoLogOutOutline } from "react-icons/io5";
 import checkTeacherAuth from "./helpers/check-auth";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 const NavBar = () => {
   checkTeacherAuth();
 
   const [teacher, setTeacher] = useState<Admin>();
 
+  const { status, data } = useSession();
+
   const getTeacher = async () => {
-    const res = await axios.get("/api/teacher/7");
-    setTeacher(res.data.data);
+    if (data?.user.id) {
+      const res = await axios.get("/api/teacher/" + data?.user.id);
+      setTeacher(res.data.data);
+    }
   };
 
   useEffect(() => {
     getTeacher();
-  }, []);
+  }, [data]);
 
   return (
     <Flex

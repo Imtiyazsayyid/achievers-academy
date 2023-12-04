@@ -29,6 +29,7 @@ import Pagination from "@/app/components/Pagination";
 import StatusFilter from "@/app/components/filters/StatusFilter";
 import BoardFilter from "@/app/components/filters/BoardFilter";
 import GradeFilter from "@/app/components/filters/GradeFilter";
+import { useSession } from "next-auth/react";
 
 type DetailedLectureGroup = LectureGroup & {
   subject: Subject & {
@@ -55,10 +56,12 @@ const LectureGroupsPage = () => {
   });
   const router = useRouter();
 
+  const { status, data } = useSession();
+
   const getAllLectureGroups = async () => {
     const res = await axios.get("/api/lecture-group", {
       params: {
-        teacherId: 7,
+        teacherId: data?.user.id,
         searchText,
         pageNumber: pagination.pageNumber,
         numberOfItems: pagination.numberOfItems,
