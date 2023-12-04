@@ -2,7 +2,9 @@
 import { Admin } from "@prisma/client";
 import {
   Avatar,
+  Button,
   Container,
+  DropdownMenu,
   Flex,
   Heading,
   HoverCard,
@@ -49,7 +51,7 @@ const NavBar = () => {
           </Text>
         </Flex>
 
-        <HoverCard.Root>
+        {/* <HoverCard.Root>
           <HoverCard.Trigger>
             <Flex>
               <Avatar
@@ -86,7 +88,36 @@ const NavBar = () => {
               <Text>Logout</Text>
             </Flex>
           </HoverCard.Content>
-        </HoverCard.Root>
+        </HoverCard.Root> */}
+
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <Flex>
+              <Avatar
+                fallback={teacher?.name[0] || "?"}
+                radius="full"
+                className="cursor-pointer"
+              />
+            </Flex>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Item>
+              <Flex gap={"2"} align={"center"}>
+                <GearIcon /> Settings
+              </Flex>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item>
+              <Flex gap={"2"} align={"center"}>
+                <PersonIcon /> Profile
+              </Flex>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onClick={() => signOut()}>
+              <Flex gap={"2"} align={"center"}>
+                <IoLogOutOutline /> Logout
+              </Flex>
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       </Flex>
     </Flex>
   );

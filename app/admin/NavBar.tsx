@@ -3,6 +3,7 @@ import { Admin } from "@prisma/client";
 import {
   Avatar,
   Container,
+  DropdownMenu,
   Flex,
   Heading,
   HoverCard,
@@ -49,8 +50,8 @@ const NavBar = () => {
           </Text>
         </Flex>
 
-        <HoverCard.Root>
-          <HoverCard.Trigger>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
             <Flex>
               <Avatar
                 fallback={adminUser?.name[0] || "?"}
@@ -58,35 +59,25 @@ const NavBar = () => {
                 className="cursor-pointer"
               />
             </Flex>
-          </HoverCard.Trigger>
-          <HoverCard.Content className="p-0">
-            <Flex
-              gap={"2"}
-              align={"center"}
-              className="cursor-pointer hover:bg-[var(--violet-a3)] px-5 py-1 rounded-lg hover:text-[var(--violet-a11)]"
-            >
-              <GearIcon />
-              <Text>Settings</Text>
-            </Flex>
-            <Flex
-              gap={"2"}
-              align={"center"}
-              className="cursor-pointer hover:bg-[var(--violet-a3)] px-5 py-1 rounded-lg hover:text-[var(--violet-a11)]"
-            >
-              <PersonIcon />
-              <Text>Profile</Text>
-            </Flex>
-            <Flex
-              gap={"2"}
-              align={"center"}
-              className="cursor-pointer hover:bg-[var(--violet-a3)] px-5 py-1 rounded-lg hover:text-[var(--violet-a11)]"
-              onClick={() => signOut()}
-            >
-              <IoLogOutOutline />
-              <Text>Logout</Text>
-            </Flex>
-          </HoverCard.Content>
-        </HoverCard.Root>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Item>
+              <Flex gap={"2"} align={"center"}>
+                <GearIcon /> Settings
+              </Flex>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item>
+              <Flex gap={"2"} align={"center"}>
+                <PersonIcon /> Profile
+              </Flex>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onClick={() => signOut()}>
+              <Flex gap={"2"} align={"center"}>
+                <IoLogOutOutline /> Logout
+              </Flex>
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       </Flex>
     </Flex>
   );

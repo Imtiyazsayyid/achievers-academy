@@ -5,7 +5,9 @@ const checkStudentAuth = () => {
   const router = useRouter();
   const { status, data } = useSession();
 
-  if (status == "unauthenticated" || data?.user.role !== "student")
+  if (status === "loading") return;
+
+  if (status === "unauthenticated" || data?.user.role !== "student")
     router.push("/login");
 };
 

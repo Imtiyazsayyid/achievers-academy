@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 async function isAdmin() {
   const session = await getServerSession();
   if (session) {
-    console.log({ session });
     const admin_email = session.user.email;
     if (!admin_email) return false;
 

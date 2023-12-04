@@ -1,4 +1,4 @@
-import { Container, Flex } from "@radix-ui/themes";
+import { Container, Flex, useThemeContext } from "@radix-ui/themes";
 import NavBar from "./NavBar";
 import VerticalNavBar from "./VerticalNavBar";
 import { Toaster } from "react-hot-toast";

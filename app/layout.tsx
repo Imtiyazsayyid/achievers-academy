@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 // import { Poppins } from "next/font/google";
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
-import { Container, Theme, ThemePanel } from "@radix-ui/themes";
+import {
+  Container,
+  Theme,
+  ThemePanel,
+  useThemeContext,
+} from "@radix-ui/themes";
 import "../theme-config.css";
 import NavBar from "./admin/NavBar";
 import { Toaster } from "react-hot-toast";
@@ -44,7 +49,8 @@ export default function RootLayout({
       <body className={""}>
         <Theme accentColor="violet">
           <AuthProvider>
-            <main className="bg-slate-100 h-screen">{children}</main>
+            {/* bg-slate-100  */}
+            <main className={`h-screen bg-slate-100`}>{children}</main>
           </AuthProvider>
         </Theme>
       </body>

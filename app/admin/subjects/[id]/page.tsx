@@ -19,7 +19,7 @@ import {
 } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import ChapterDialog from "./ChapterDialog";
-import { Board, Grade, Chapter } from "@prisma/client";
+import { Board, Grade, Chapter, Subject } from "@prisma/client";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SearchBar from "@/app/components/SearchBar";
@@ -37,6 +37,7 @@ interface Props {
 
 const ChaptersPage = ({ params }: Props) => {
   const [chapters, setChapters] = useState<Chapter[]>();
+  const [subject, setSubject] = useState<Subject>();
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState("all");
 
@@ -68,6 +69,15 @@ const ChaptersPage = ({ params }: Props) => {
     });
   };
 
+  const getSubject = async () => {
+    const res = await axios.get("/api/subject", {
+      params: {
+        id: params.id,
+      },
+    });
+
+    setSubject(res.data.data[0]);
+  };
   const deleteChapter = async (id: number) => {
     try {
       const res = await axios.delete("/api/chapter", {
@@ -86,6 +96,7 @@ const ChaptersPage = ({ params }: Props) => {
   };
 
   useEffect(() => {
+    getSubject();
     getAllChapters();
   }, [searchText, pagination.numberOfItems, pagination.pageNumber, status]);
 
@@ -97,7 +108,7 @@ const ChaptersPage = ({ params }: Props) => {
         px="8"
         className="bg-white border rounded-lg shadow-lg h-full w-full"
       >
-        <Heading mt={"5"}>Chapters</Heading>
+        <Heading mt={"5"}>{subject?.name} Chapters</Heading>
         <Flex justify={"between"} mb={"2"} mt={"6"} align={"end"}>
           <SearchBar
             placeholder={"Search For Chapter"}

@@ -15,6 +15,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { CldUploadWidget, CldImage } from "next-cloudinary";
 
 interface Props {
   params: {
@@ -24,8 +25,14 @@ interface Props {
   };
 }
 
+export interface CloudinaryResult {
+  url: string;
+  public_id: string;
+}
+
 const EditTopicPage = ({ params }: Props) => {
   const router = useRouter();
+  const [publicId, setPublicId] = useState("");
 
   const getSingleTopic = async () => {
     const res = await axios.get("/api/topic", {
@@ -138,19 +145,74 @@ const EditTopicPage = ({ params }: Props) => {
                 />
               </TextField.Root>
             </Flex>
-            <Flex direction={"column"} gap={"2"} className="w-1/3">
-              <Text size={"1"}>PDF Link</Text>
-              <TextField.Root>
-                <TextField.Input
-                  defaultValue={topicDetails.topicPDFLink}
-                  onChange={(e) =>
+
+            <Flex gap={"2"} className="w-1/3" align={"end"}>
+              <Flex direction={"column"} className="w-full">
+                <Text size={"1"}>PDF</Text>
+                <TextField.Root>
+                  <TextField.Input
+                    defaultValue={topicDetails.topicPDFLink}
+                    onChange={(e) =>
+                      setTopicDetails({
+                        ...topicDetails,
+                        topicPDFLink: e.target.value,
+                      })
+                    }
+                  />
+                </TextField.Root>
+              </Flex>
+              <Flex className="w-40">
+                <CldUploadWidget
+                  options={{
+                    sources: ["local", "url"],
+                    multiple: false,
+                    cropping: true,
+                    styles: {
+                      palette: {
+                        window: "#ffffff",
+                        sourceBg: "#f4f4f5",
+                        windowBorder: "#90a0b3",
+                        tabIcon: "#000000",
+                        inactiveTabIcon: "#555a5f",
+                        menuIcons: "#555a5f",
+                        link: "#0433ff",
+                        action: "#339933",
+                        inProgress: "#0433ff",
+                        complete: "#339933",
+                        error: "#cc0000",
+                        textDark: "#000000",
+                        textLight: "#fcfffd",
+                      },
+                      fonts: {
+                        default: null,
+                        "sans-serif": {
+                          url: null,
+                          active: true,
+                        },
+                      },
+                    },
+                  }}
+                  uploadPreset="oekh1dfb"
+                  onUpload={(result) => {
+                    if (result.event !== "success") return;
+                    const info = result.info as CloudinaryResult;
                     setTopicDetails({
                       ...topicDetails,
-                      topicPDFLink: e.target.value,
-                    })
-                  }
-                />
-              </TextField.Root>
+                      topicPDFLink: info.url,
+                    });
+                  }}
+                >
+                  {({ open }) => (
+                    <Button
+                      type="button"
+                      className="btn btn-primary w-full"
+                      onClick={() => open()}
+                    >
+                      Upload PDF
+                    </Button>
+                  )}
+                </CldUploadWidget>
+              </Flex>
             </Flex>
           </Flex>
           <Flex direction={"column"} gap={"2"} className="w-100">

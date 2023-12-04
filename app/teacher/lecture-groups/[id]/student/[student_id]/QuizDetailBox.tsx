@@ -59,7 +59,7 @@ const QuizDetailBox = ({ topic, studentId }: Props) => {
   return (
     <Flex
       direction={"column"}
-      className="h-full border bg-white py-5 px-5 shadow-lg rounded-lg min-w-[400px]"
+      className="h-full border bg-white py-5 px-5 shadow-lg rounded-lg min-w-[400px] overflow-hidden overflow-y-scroll"
     >
       <Flex mb={"1"} justify={"center"}>
         {studentsCompleted?.includes(37) ? (

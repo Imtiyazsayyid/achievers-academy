@@ -10,8 +10,6 @@ export async function GET(request: NextRequest) {
   const status = request.nextUrl.searchParams.get("status");
   const chapterId = request.nextUrl.searchParams.get("chapterId");
 
-  console.log({ searchText });
-
   if (!subjectId)
     return NextResponse.json({ error: "Send All Details", status: false });
 

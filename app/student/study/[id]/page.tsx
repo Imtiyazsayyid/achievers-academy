@@ -1,7 +1,11 @@
 "use client";
 import PdfViewer from "@/app/components/PdfViewer";
 import { CompletedTopics, Topic } from "@prisma/client";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  InfoCircledIcon,
+} from "@radix-ui/react-icons";
 import { Box, Button, Callout, Flex, Heading, Text } from "@radix-ui/themes";
 import axios from "axios";
 import Link from "next/link";
@@ -19,6 +23,8 @@ const StudyPage = ({ params }: Props) => {
   const [topic, setTopic] = useState<Topic>();
   const [isComplete, setComplete] = useState(false);
   const router = useRouter();
+  const [showVideo, setShowVideo] = useState(false);
+  const [showPDF, setShowPDF] = useState(false);
 
   const getTopic = async () => {
     const res = await axios.get("/api/topic/" + params.id);
@@ -66,14 +72,14 @@ const StudyPage = ({ params }: Props) => {
 
   return (
     <Flex
-      className="w-full h-[90vh] px-4 overflow-hidden overflow-y-scroll"
+      className="w-full h-[90vh] px-10 overflow-hidden overflow-y-scroll p-10"
       direction={"column"}
       pt={"6"}
       gap={"4"}
     >
       {isComplete && (
         <Callout.Root>
-          <Flex className="w-[62vw]" justify={"between"} align={"center"}>
+          <Flex className="w-[60vw]" justify={"between"} align={"center"}>
             <Flex gap={"2"}>
               <Callout.Icon>
                 <InfoCircledIcon />
@@ -89,19 +95,72 @@ const StudyPage = ({ params }: Props) => {
         {topic?.name}
       </Heading>
       {topic?.video && (
-        <Flex className="border shadow-lg rounded-lg bg-white w-full p-5">
-          <video
-            src={topic.video}
-            controls
-            className="rounded-lg w-full h-full"
-          />
+        <Flex
+          className="border shadow-lg rounded-lg bg-white w-full p-5"
+          gap={"4"}
+          direction={"column"}
+        >
+          <Flex justify={"between"}>
+            <Heading size={"3"}>Video</Heading>
+            {!showVideo ? (
+              <Flex
+                className="border shadow-md rounded-full h-5 w-5 cursor-pointer"
+                align={"center"}
+                justify={"center"}
+              >
+                <ChevronDownIcon onClick={() => setShowVideo(true)} />
+              </Flex>
+            ) : (
+              <Flex
+                className="border shadow-md rounded-full h-5 w-5 cursor-pointer"
+                align={"center"}
+                justify={"center"}
+              >
+                <ChevronUpIcon onClick={() => setShowVideo(false)} />
+              </Flex>
+            )}
+          </Flex>
+
+          {showVideo && (
+            <video
+              src={topic.video}
+              controls
+              className="rounded-lg w-full h-full"
+            />
+          )}
         </Flex>
       )}
 
-      {/* <Box className="shadow-lg rounded-lg bg-white w-full p-5">
-        <PdfViewer fileUrl="https://www.africau.edu/images/default/sample.pdf" />
-      </Box> */}
       {topic?.pdf && (
+        <Flex
+          className="shadow-lg rounded-lg bg-white w-full p-5 border"
+          direction={"column"}
+          gap={"4"}
+        >
+          <Flex justify={"between"}>
+            <Heading size={"3"}>PDF</Heading>
+            {!showPDF ? (
+              <Flex
+                className="border shadow-md rounded-full h-5 w-5 cursor-pointer"
+                align={"center"}
+                justify={"center"}
+              >
+                <ChevronDownIcon onClick={() => setShowPDF(true)} />
+              </Flex>
+            ) : (
+              <Flex
+                className="border shadow-md rounded-full h-5 w-5 cursor-pointer"
+                align={"center"}
+                justify={"center"}
+              >
+                <ChevronUpIcon onClick={() => setShowPDF(false)} />
+              </Flex>
+            )}
+          </Flex>
+          {showPDF && <PdfViewer fileUrl={topic.pdf} />}
+        </Flex>
+      )}
+      {/* {topic?.pdf && (
         <Flex
           className="border shadow-lg rounded-lg bg-white w-full p-5"
           direction={"column"}
@@ -116,7 +175,7 @@ const StudyPage = ({ params }: Props) => {
             </Button>
           </Link>
         </Flex>
-      )}
+      )} */}
       {topic?.description && (
         <Flex
           className="border shadow-lg rounded-lg bg-white w-full p-5"
@@ -131,7 +190,6 @@ const StudyPage = ({ params }: Props) => {
           </Text>
         </Flex>
       )}
-
       {!isComplete && (
         <Flex justify={"end"} onClick={markComplete}>
           <Button>Mark as Completed</Button>

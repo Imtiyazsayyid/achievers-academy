@@ -48,31 +48,31 @@ const LoginPage = () => {
 
   return (
     <Flex className="h-full">
-      <Flex className="w-2/3">
+      <Flex className="w-3/5">
         <img
-          src="https://images.pexels.com/photos/1209925/pexels-photo-1209925.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-          className="object-cover"
+          src="https://images.pexels.com/photos/2546035/pexels-photo-2546035.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+          className="object-cover w-full"
         />
       </Flex>
       <Flex
-        className="w-1/3 p-10"
+        className="w-2/5 p-10"
         direction={"column"}
         justify={"center"}
         align={"center"}
         gap={"5"}
       >
         <Heading>Welcome To Achievers Academy</Heading>
+        {invalidCredentials && (
+          <p className="text-sm text-red-400 text-center py-1">
+            Invalid Credentials.
+          </p>
+        )}
         <Flex
-          className="w-full h-fit rounded-lg"
+          className="w-full h-fit rounded-lg p-10 shadow-md bg-white"
           direction={"column"}
           gap={"2"}
         >
-          {invalidCredentials && (
-            <p className="text-sm text-red-400 text-center py-1">
-              Invalid Credentials.
-            </p>
-          )}
-          <TextField.Root size={"2"}>
+          <TextField.Root size={"3"}>
             <TextField.Slot>
               <EnvelopeClosedIcon height="16" width="16" />
             </TextField.Slot>
@@ -83,7 +83,7 @@ const LoginPage = () => {
               }
             />
           </TextField.Root>
-          <TextField.Root>
+          <TextField.Root size={"3"}>
             <TextField.Slot>
               <LockClosedIcon height="16" width="16" />
             </TextField.Slot>
@@ -96,7 +96,7 @@ const LoginPage = () => {
             />
           </TextField.Root>
           <Text className="text-xs text-slate-500">Forgot Password?</Text>
-          <Button mt={"3"} onClick={handleLogin}>
+          <Button mt={"5"} size={"2"} onClick={handleLogin}>
             Log In
           </Button>
         </Flex>

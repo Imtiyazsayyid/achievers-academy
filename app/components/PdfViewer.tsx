@@ -37,7 +37,7 @@ const DefaultLayoutExample: React.FC<DefaultLayoutExampleProps> = ({
 
   return (
     <div className="h-[1000px] rounded-lg border overflow-hidden">
-      <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+      <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js">
         <Viewer
           fileUrl={fileUrl}
           plugins={[defaultLayoutPluginInstance]}

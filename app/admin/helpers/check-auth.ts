@@ -5,6 +5,8 @@ const checkAdminAuth = () => {
   const router = useRouter();
   const { status, data } = useSession();
 
+  if (status === "loading") return;
+
   if (status == "unauthenticated" || data?.user.role !== "admin")
     router.push("/login");
 };

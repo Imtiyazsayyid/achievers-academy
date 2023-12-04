@@ -5,6 +5,8 @@ const checkTeacherAuth = () => {
   const router = useRouter();
   const { status, data } = useSession();
 
+  if (status === "loading") return;
+
   if (status == "unauthenticated" || data?.user.role !== "teacher")
     router.push("/login");
 };

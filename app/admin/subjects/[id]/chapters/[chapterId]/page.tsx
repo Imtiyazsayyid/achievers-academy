@@ -19,7 +19,7 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import { Board, Grade, Topic } from "@prisma/client";
+import { Board, Chapter, Grade, Topic } from "@prisma/client";
 import axios from "axios";
 import toast from "react-hot-toast";
 import SearchBar from "@/app/components/SearchBar";
@@ -38,6 +38,7 @@ interface Props {
 
 const AllTopicsPage = ({ params }: Props) => {
   const [topics, setTopics] = useState<Topic[]>();
+  const [chapter, setChapter] = useState<Chapter>();
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState("all");
 
@@ -73,6 +74,17 @@ const AllTopicsPage = ({ params }: Props) => {
     }
   };
 
+  const getChapter = async () => {
+    const res = await axios.get("/api/chapter", {
+      params: {
+        subjectId: params.id,
+        chapterId: params.chapterId,
+      },
+    });
+
+    setChapter(res.data.data[0]);
+  };
+
   const deleteTopic = async (id: number) => {
     try {
       const res = await axios.delete("/api/topic", {
@@ -92,6 +104,7 @@ const AllTopicsPage = ({ params }: Props) => {
 
   useEffect(() => {
     getAllTopics();
+    getChapter();
   }, [searchText, pagination.numberOfItems, pagination.pageNumber, status]);
 
   return (
@@ -102,7 +115,7 @@ const AllTopicsPage = ({ params }: Props) => {
         px="8"
         className="bg-white border rounded-lg shadow-lg h-full w-full"
       >
-        <Heading mt={"5"}>Topics</Heading>
+        <Heading mt={"5"}>{chapter?.name} Topics</Heading>
         <Flex justify={"between"} mb={"2"} mt={"6"} align={"end"}>
           <SearchBar
             placeholder={"Search For Topic"}
