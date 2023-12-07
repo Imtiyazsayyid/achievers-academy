@@ -39,8 +39,6 @@ const GradeDialog = ({
   });
 
   async function addNewGrade() {
-    console.log(gradeDetails);
-
     const res = await axios.post("/api/grade", {
       gradeName: gradeDetails.gradeName,
       gradeStatus: gradeDetails.gradeStatus,

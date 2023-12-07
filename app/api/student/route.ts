@@ -1,6 +1,8 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import isAdmin from "../helpers/authentication";
+import { transporter, mailOptions } from "@/app/email/email";
+import WelcomNewStudent from "@/app/email/templates/WelcomNewStudent";
 
 export async function GET(request: NextRequest) {
   let where: any = {};
@@ -129,11 +131,44 @@ export async function POST(request: NextRequest) {
         },
       });
 
-    await prisma.studentSubjectMapper.create({
+    const studentSubjects = await prisma.studentSubjectMapper.create({
+      include: {
+        subject: true,
+      },
       data: {
         student_id: newStudent.id,
         subject_id: newStudentLectureGroupMap.lecture_group.subject_id,
       },
+    });
+  }
+
+  const studentLectureGroups = await prisma.studentLectureGroupMapper.findMany({
+    include: {
+      lecture_group: {
+        include: {
+          subject: true,
+        },
+      },
+    },
+    where: {
+      student_id: newStudent.id,
+    },
+  });
+
+  if (newStudent) {
+    await transporter.sendMail({
+      ...mailOptions,
+      to: newStudent.email,
+      subject: "Welcome Aboard Achievers Academy",
+      html: WelcomNewStudent(
+        newStudent.name,
+        newStudent.email,
+        newStudent.password,
+        studentLectureGroups.map((lectureGroup) => ({
+          name: lectureGroup.lecture_group.name,
+          subject: lectureGroup.lecture_group.subject.name,
+        }))
+      ),
     });
   }
 
@@ -203,6 +238,18 @@ export async function DELETE(request: NextRequest) {
   if (!id) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
+
+  const deletedQuizAttempts = await prisma.quizAttempts.deleteMany({
+    where: {
+      student_id: parseInt(id),
+    },
+  });
+
+  const deletedCompleteTopics = await prisma.completedTopics.deleteMany({
+    where: {
+      student_id: parseInt(id),
+    },
+  });
 
   const deletedStudentSubjects = await prisma.studentSubjectMapper.deleteMany({
     where: {

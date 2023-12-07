@@ -47,8 +47,6 @@ const ChapterDialog = ({
   });
 
   async function addNewChapter() {
-    console.log(chapterDetails.subjectId);
-
     const res = await axios.post("/api/chapter", {
       chapterName: chapterDetails.chapterName,
       chapterStatus: chapterDetails.chapterStatus,
@@ -71,8 +69,6 @@ const ChapterDialog = ({
       chapterStatus: chapterDetails.chapterStatus,
       chapterNumber: chapterDetails.chapterNumber,
     };
-
-    console.log(body);
 
     const res = await axios.put("/api/chapter", body);
     if (res.data.status) {

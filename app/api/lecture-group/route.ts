@@ -1,6 +1,9 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import isAdmin from "../helpers/authentication";
+import { mailOptions, transporter } from "@/app/email/email";
+import TeacherAddedToNewLectureGroup from "@/app/email/templates/TeacherAddedToLectureGroup";
+import TeacherRemovedFromNewLectureGroup from "@/app/email/templates/TeacherRemovedFromLectureGroup";
 
 export async function GET(request: NextRequest) {
   let where: any = {};
@@ -119,7 +122,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
 
-  const newBoard = await prisma.lectureGroup.create({
+  const newLectureGroup = await prisma.lectureGroup.create({
+    include: {
+      teacher: true,
+      subject: {
+        include: {
+          board: true,
+          grade: true,
+        },
+      },
+    },
     data: {
       name: body.lectureGroupName,
       subject_id: parseInt(body.subjectId),
@@ -128,7 +140,21 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  return NextResponse.json({ data: newBoard, status: true });
+  // email
+
+  if (newLectureGroup) {
+    await transporter.sendMail({
+      ...mailOptions,
+      to: newLectureGroup.teacher.email,
+      subject: "Lecture Group Assigned",
+      html: TeacherAddedToNewLectureGroup(newLectureGroup.teacher.name, {
+        name: newLectureGroup.name,
+        subject: newLectureGroup.subject,
+      }),
+    });
+  }
+
+  return NextResponse.json({ data: newLectureGroup, status: true });
 }
 
 export async function PUT(request: NextRequest) {
@@ -148,7 +174,25 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
 
-  const updatedBoard = await prisma.lectureGroup.update({
+  const previousTeacher = await prisma.lectureGroup.findUnique({
+    include: {
+      teacher: true,
+    },
+    where: {
+      id: parseInt(body.lectureGroupId),
+    },
+  });
+
+  const updatedLectureGroup = await prisma.lectureGroup.update({
+    include: {
+      teacher: true,
+      subject: {
+        include: {
+          grade: true,
+          board: true,
+        },
+      },
+    },
     data: {
       name: body.lectureGroupName,
       subject_id: parseInt(body.subjectId),
@@ -160,7 +204,36 @@ export async function PUT(request: NextRequest) {
     },
   });
 
-  return NextResponse.json({ data: updatedBoard, status: true });
+  // email
+
+  if (updatedLectureGroup) {
+    await transporter.sendMail({
+      ...mailOptions,
+      to: updatedLectureGroup.teacher.email,
+      subject: "Lecture Group Assigned",
+      html: TeacherAddedToNewLectureGroup(updatedLectureGroup.teacher.name, {
+        name: updatedLectureGroup.teacher.name,
+        subject: updatedLectureGroup.subject,
+      }),
+    });
+  }
+
+  if (
+    previousTeacher &&
+    previousTeacher?.teacher_id !== updatedLectureGroup.teacher_id
+  ) {
+    await transporter.sendMail({
+      ...mailOptions,
+      to: previousTeacher?.teacher.email,
+      subject: "Lecture Group Unassigned",
+      html: TeacherRemovedFromNewLectureGroup(previousTeacher.name, {
+        name: updatedLectureGroup.teacher.name,
+        subject: updatedLectureGroup.subject,
+      }),
+    });
+  }
+
+  return NextResponse.json({ data: updatedLectureGroup, status: true });
 }
 
 export async function DELETE(request: NextRequest) {

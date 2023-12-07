@@ -13,8 +13,6 @@ async function isAdmin() {
       },
     });
 
-    console.log({ admin });
-
     if (admin) return true;
   } else {
     return false;

@@ -19,6 +19,7 @@ import { CalendarIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import {} from "@radix-ui/react-dialog";
 import moment from "moment";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const AdminHomePage = () => {
   const selectionRange = {
@@ -69,6 +70,8 @@ const AdminHomePage = () => {
     const res = await axios.get("/api/lecture-group");
     setLectureGroupCount(res.data.count);
   };
+
+  const router = useRouter();
 
   useEffect(() => {
     getStudentCount();
@@ -155,51 +158,56 @@ const AdminHomePage = () => {
           </Flex>
           <Flex className="w-1/5" direction={"column"} gap={"2"}>
             <Flex
-              className="h-1/5 border rounded-lg shadow-lg bg-white"
+              className="h-1/5 border rounded-lg shadow-lg bg-white  cursor-pointer"
               justify={"center"}
               align={"center"}
               direction={"column"}
               gap={"1"}
+              onClick={() => router.push("/admin/students")}
             >
               <Text className="text-xs text-slate-500">Students On Board</Text>
               <Heading>{studentCount}</Heading>
             </Flex>
             <Flex
-              className="h-1/5 border rounded-lg shadow-lg bg-white"
+              className="h-1/5 border rounded-lg shadow-lg bg-white  cursor-pointer"
               justify={"center"}
               align={"center"}
               direction={"column"}
               gap={"1"}
+              onClick={() => router.push("/admin/teachers")}
             >
               <Text className="text-xs text-slate-500">Teachers On Board</Text>
               <Heading>{teacherCount}</Heading>
             </Flex>
             <Flex
-              className="h-1/5 border rounded-lg shadow-lg bg-white"
+              className="h-1/5 border rounded-lg shadow-lg bg-white  cursor-pointer"
               justify={"center"}
               align={"center"}
               direction={"column"}
               gap={"1"}
+              onClick={() => router.push("/admin/boards")}
             >
               <Text className="text-xs text-slate-500">Total Boards</Text>
               <Heading>{boardCount}</Heading>
             </Flex>
             <Flex
-              className="h-1/5 border rounded-lg shadow-lg bg-white"
+              className="h-1/5 border rounded-lg shadow-lg bg-white cursor-pointer"
               justify={"center"}
               align={"center"}
               direction={"column"}
               gap={"1"}
+              onClick={() => router.push("/admin/grades")}
             >
               <Text className="text-xs text-slate-500">Total Grades</Text>
               <Heading>{gradeCount}</Heading>
             </Flex>
             <Flex
-              className="h-1/5 border rounded-lg shadow-lg bg-white"
+              className="h-1/5 border rounded-lg shadow-lg bg-white cursor-pointer"
               justify={"center"}
               align={"center"}
               direction={"column"}
               gap={"1"}
+              onClick={() => router.push("/admin/lecture-groups")}
             >
               <Text className="text-xs text-slate-500">
                 Total Lecture Groups

@@ -106,6 +106,7 @@ const StudentForm = () => {
     }
 
     const res = await axios.post("/api/student", body);
+
     if (res.data.status) {
       toast.success("New Student Added");
       router.push("/admin/students");
@@ -193,7 +194,6 @@ const StudentForm = () => {
                   ...studentDetails,
                   board_id: value,
                 });
-                // console.log(value);
               }}
             >
               <Select.Trigger />
@@ -214,7 +214,6 @@ const StudentForm = () => {
                   ...studentDetails,
                   grade_id: value,
                 });
-                // console.log(value);
               }}
             >
               <Select.Trigger />

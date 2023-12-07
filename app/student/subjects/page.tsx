@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import SubjectCard from "./SubjectCard";
 import axios from "axios";
 import { Student, StudentSubjectMapper, Subject } from "@prisma/client";
+import { useSession } from "next-auth/react";
 
 type StudentSubjects = StudentSubjectMapper & {
   subject: Subject;
@@ -14,12 +15,13 @@ type StudentSubjects = StudentSubjectMapper & {
 const page = () => {
   const [studentSubjects, setStudentSubjects] = useState<StudentSubjects[]>();
   const [searchText, setSearchText] = useState("");
+  const { status, data } = useSession();
 
   const getStudentSubjects = async () => {
     const res = await axios.get("/api/subject/student", {
       params: {
         searchText,
-        studentId: 37,
+        studentId: data?.user.id,
         onlyActive: true,
       },
     });
@@ -28,7 +30,9 @@ const page = () => {
   };
 
   useEffect(() => {
-    getStudentSubjects();
+    if (status === "authenticated") {
+      getStudentSubjects();
+    }
   }, [searchText]);
 
   return (

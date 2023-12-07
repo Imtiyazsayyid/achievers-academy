@@ -8,6 +8,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Box, Button, Callout, Flex, Heading, Text } from "@radix-ui/themes";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -33,7 +34,7 @@ const StudyPage = ({ params }: Props) => {
     setTopic(responseTopic);
 
     const isCompleted = responseTopic.students_completed_topic.find(
-      (student: CompletedTopics) => student.student_id === 37
+      (student: CompletedTopics) => student.student_id === data?.user.id
     );
 
     if (isCompleted) {
@@ -41,9 +42,10 @@ const StudyPage = ({ params }: Props) => {
     }
   };
 
+  const { data } = useSession();
   const markComplete = async () => {
     const res = await axios.post("/api/topic/" + params.id, {
-      studentId: 37,
+      studentId: data?.user.id,
     });
 
     if (res.data.status) {
@@ -56,7 +58,7 @@ const StudyPage = ({ params }: Props) => {
   const markIncomplete = async () => {
     const res = await axios.delete("/api/topic/" + params.id, {
       params: {
-        student_id: 37,
+        student_id: data?.user.id,
       },
     });
 

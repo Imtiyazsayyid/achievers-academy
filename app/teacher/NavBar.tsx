@@ -14,10 +14,13 @@ import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import GoBack from "../components/GoBack";
-import { GearIcon, PersonIcon } from "@radix-ui/react-icons";
+import { BellIcon, GearIcon, PersonIcon } from "@radix-ui/react-icons";
 import { IoLogOutOutline } from "react-icons/io5";
 import checkTeacherAuth from "./helpers/check-auth";
 import { signOut, useSession } from "next-auth/react";
+import { FaRegBell } from "react-icons/fa";
+import Notification from "../components/Notification";
+
 const NavBar = () => {
   checkTeacherAuth();
 
@@ -43,15 +46,17 @@ const NavBar = () => {
       align={"center"}
     >
       <GoBack />
-      <Flex gap={"3"}>
-        <Flex direction={"column"} justify={"end"} align={"end"}>
-          <Heading size={"2"}>{teacher?.name}</Heading>
-          <Text size="1" className="text-xs text-slate-500">
-            Teacher
-          </Text>
-        </Flex>
+      <Flex align={"center"} gap={"5"}>
+        <Notification isNew={true} />
+        <Flex gap={"3"}>
+          <Flex direction={"column"} justify={"end"} align={"end"}>
+            <Heading size={"2"}>{teacher?.name}</Heading>
+            <Text size="1" className="text-xs text-slate-500">
+              Teacher
+            </Text>
+          </Flex>
 
-        {/* <HoverCard.Root>
+          {/* <HoverCard.Root>
           <HoverCard.Trigger>
             <Flex>
               <Avatar
@@ -90,34 +95,35 @@ const NavBar = () => {
           </HoverCard.Content>
         </HoverCard.Root> */}
 
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <Flex>
-              <Avatar
-                fallback={teacher?.name[0] || "?"}
-                radius="full"
-                className="cursor-pointer"
-              />
-            </Flex>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            <DropdownMenu.Item>
-              <Flex gap={"2"} align={"center"}>
-                <GearIcon /> Settings
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <Flex>
+                <Avatar
+                  fallback={teacher?.name[0] || "?"}
+                  radius="full"
+                  className="cursor-pointer"
+                />
               </Flex>
-            </DropdownMenu.Item>
-            <DropdownMenu.Item>
-              <Flex gap={"2"} align={"center"}>
-                <PersonIcon /> Profile
-              </Flex>
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onClick={() => signOut()}>
-              <Flex gap={"2"} align={"center"}>
-                <IoLogOutOutline /> Logout
-              </Flex>
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              <DropdownMenu.Item>
+                <Flex gap={"2"} align={"center"}>
+                  <GearIcon /> Settings
+                </Flex>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item>
+                <Flex gap={"2"} align={"center"}>
+                  <PersonIcon /> Profile
+                </Flex>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item onClick={() => signOut()}>
+                <Flex gap={"2"} align={"center"}>
+                  <IoLogOutOutline /> Logout
+                </Flex>
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        </Flex>
       </Flex>
     </Flex>
   );

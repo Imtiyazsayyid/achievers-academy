@@ -48,6 +48,7 @@ export default function RootLayout({
       {/* poppins.variable + "  */}
       <body className={""}>
         <Theme accentColor="violet">
+          <Toaster />
           <AuthProvider>
             {/* bg-slate-100  */}
             <main className={`h-screen bg-slate-100`}>{children}</main>

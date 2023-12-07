@@ -37,6 +37,16 @@ export async function GET(request: NextRequest) {
       student_id: parseInt(student_id),
     },
   });
+  const quizAttemptCount = await prisma.quizAttempts.count({
+    where: {
+      topic_id: parseInt(topicId),
+      student_id: parseInt(student_id),
+    },
+  });
 
-  return NextResponse.json({ data: quizAttempts, status: true });
+  return NextResponse.json({
+    data: quizAttempts,
+    status: true,
+    count: quizAttemptCount,
+  });
 }

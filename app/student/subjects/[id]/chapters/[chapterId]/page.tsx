@@ -11,6 +11,7 @@ import {
   Text,
 } from "@radix-ui/themes";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -58,6 +59,8 @@ const TopicsPage = ({ params }: Props) => {
     setTopics(res.data.data);
   };
 
+  const { status, data } = useSession();
+
   useEffect(() => {
     getAllTopics();
     getChapter();
@@ -94,7 +97,8 @@ const TopicsPage = ({ params }: Props) => {
                   <Avatar fallback={topic.name[0]} />
                   <Heading size={"2"}>{topic.name}</Heading>
                 </Flex>
-                {students_completed?.includes(37) ? (
+                {data?.user.id &&
+                students_completed?.includes(data?.user.id) ? (
                   <Badge
                     className="w-fit"
                     color="blue"

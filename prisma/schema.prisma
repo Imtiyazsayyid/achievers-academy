@@ -157,6 +157,7 @@ model Student {
   name          String
   email         String                      @unique
   password      String
+  otp           String?
   grade_id      Int
   grade         Grade                       @relation(fields: [grade_id], references: [id])
   board_id      Int
@@ -166,6 +167,7 @@ model Student {
   // quiz_answers  QuizQuestionAnswer[]
   quiz_attempts QuizAttempts[]
   completed_topics CompletedTopics[]
+  notifications Notification[]
 
   status     Boolean  @default(true)
   created_at DateTime @default(now())
@@ -219,7 +221,9 @@ model Teacher {
   name     String
   email    String @unique
   password String
+  otp      String?
   lectureGroups LectureGroup[]
+  notifications Notification[]
   // grades       TeacherGradeMapper[]
   // boards       TeacherBoardMapper[]
 
@@ -240,11 +244,27 @@ model Admin {
 }
 
 model CompletedTopics {
-  id       Int    @id @default(autoincrement())
-  student_id Int 
+  id            Int    @id @default(autoincrement())
+  student_id    Int 
   student Student @relation(fields: [student_id], references: [id])
-  topic_id  Int
+  topic_id      Int
   topic Topic  @relation(fields: [topic_id], references: [id])
+}
+
+model Notification {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  is_read     Boolean  @default(false)
+
+  to_teacher_id Int?
+  to_teacher    Teacher?   @relation(fields: [to_teacher_id], references: [id])
+  to_student_id Int?
+  to_student    Student? @relation(fields: [to_student_id], references: [id])
+
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
 }
 
 // model TeacherSubjectMapper {

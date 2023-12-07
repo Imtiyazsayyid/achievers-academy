@@ -1,5 +1,5 @@
 "use client";
-import { Container, Flex, Text } from "@radix-ui/themes";
+import { Button, Container, Flex, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import React from "react";
 import { GiPirateHook } from "react-icons/gi";
@@ -26,8 +26,8 @@ const NavBar = () => {
               </Link>
             ))}
           </Flex>
-          <Flex className="w-1/5">
-            <Text onClick={() => signOut()}>Log out</Text>
+          <Flex className="w-1/5" align={"center"}>
+            <Button onClick={() => signOut()}>Log out</Button>
           </Flex>
         </Flex>
       </Container>

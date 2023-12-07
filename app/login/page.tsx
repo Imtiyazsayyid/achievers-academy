@@ -95,7 +95,12 @@ const LoginPage = () => {
               }
             />
           </TextField.Root>
-          <Text className="text-xs text-slate-500">Forgot Password?</Text>
+          <Text
+            className="text-xs text-slate-500 hover:text-[var(--violet-a11)] cursor-pointer"
+            onClick={() => router.push("/reset-password")}
+          >
+            Forgot Password?
+          </Text>
           <Button mt={"5"} size={"2"} onClick={handleLogin}>
             Log In
           </Button>

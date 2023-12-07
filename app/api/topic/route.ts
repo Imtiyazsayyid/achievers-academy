@@ -98,8 +98,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Send All Details", status: false });
   }
 
-  console.log({ body });
-
   const updatedTopic = await prisma.topic.update({
     data: {
       name: body.topicName,

@@ -12,7 +12,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* <Container className="h-full"> */}
         <Flex className="w-full h-full py-5" justify={"center"}>
           <Flex className="w-full h-full mx-5" direction={"column"} gap={"2"}>
-            <Toaster />
             <NavBar />
             <Flex className="w-full h-[92%]">{children}</Flex>
           </Flex>

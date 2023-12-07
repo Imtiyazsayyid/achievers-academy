@@ -1,6 +1,8 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import isAdmin from "../helpers/authentication";
+import { mailOptions, transporter } from "@/app/email/email";
+import WelcomeNewTeacher from "@/app/email/templates/WelcomNewTeacher";
 
 export async function GET(request: NextRequest) {
   let where: any = {};
@@ -73,6 +75,13 @@ export async function POST(request: NextRequest) {
   }
 
   const newTeacher = await prisma.teacher.create({
+    include: {
+      lectureGroups: {
+        include: {
+          subject: true,
+        },
+      },
+    },
     data: {
       name: body.teacherName,
       email: body.teacherEmail,
@@ -80,6 +89,19 @@ export async function POST(request: NextRequest) {
       password: body.teacherPassword,
     },
   });
+
+  if (newTeacher) {
+    await transporter.sendMail({
+      ...mailOptions,
+      to: newTeacher.email,
+      subject: "Welcome Aboard Achievers Academy",
+      html: WelcomeNewTeacher(
+        newTeacher.name,
+        newTeacher.email,
+        newTeacher.password
+      ),
+    });
+  }
 
   return NextResponse.json({ data: newTeacher, status: true });
 }

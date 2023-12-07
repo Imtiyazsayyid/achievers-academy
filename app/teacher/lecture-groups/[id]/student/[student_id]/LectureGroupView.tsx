@@ -41,8 +41,6 @@ export const LectureGroupView = ({ params }: Props) => {
           studentId: 37,
         },
       });
-
-      console.log({ newRes });
     }
   };
 

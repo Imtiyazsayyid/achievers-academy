@@ -67,7 +67,6 @@ const EditStudentForm = ({ params }: Props) => {
     });
 
     let student = res.data.data[0];
-    console.log({ student });
 
     setStudentDetails({
       board_id: student.board_id.toString(),
@@ -118,7 +117,6 @@ const EditStudentForm = ({ params }: Props) => {
   };
 
   const updateStudent = async () => {
-    console.log(studentDetails);
     let body = {
       id: parseInt(params.id),
       studentName: studentDetails.name,
@@ -262,7 +260,6 @@ const EditStudentForm = ({ params }: Props) => {
                   grade_id: value,
                   lectureGroups: [],
                 });
-                // console.log(value);
               }}
             >
               <Select.Trigger />

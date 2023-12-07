@@ -17,6 +17,7 @@ import {
   TextArea,
 } from "@radix-ui/themes";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -32,8 +33,11 @@ type DetailedQuestion = QuizQuestion & {
 };
 
 const QuizPage = ({ params }: Props) => {
+  const { data } = useSession();
+
   const [quizQuestions, setQuizQuestions] = useState<DetailedQuestion[]>();
   const [isSubmitted, setSubmitted] = useState(false);
+  const [quizAttempts, setQuizAttempts] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState<
     { id: number; answer: string; isCorrect: boolean }[]
   >([]);
@@ -41,7 +45,6 @@ const QuizPage = ({ params }: Props) => {
 
   const getTopic = async () => {
     const res = await axios.get("/api/topic/" + params.id);
-    setTopic(res.data.data);
   };
 
   const getAllQuestions = async () => {
@@ -52,6 +55,17 @@ const QuizPage = ({ params }: Props) => {
     });
     setQuizQuestions(res.data.data);
     getAnswerStates(res.data.data);
+  };
+
+  const getQuizAttempts = async () => {
+    const res = await axios.get("/api/quiz/submitted", {
+      params: {
+        topicId: params.id,
+        studentId: data?.user.id,
+      },
+    });
+
+    setQuizAttempts(res.data.count);
   };
 
   const getAnswerStates = (questions: QuizQuestion[]) => {
@@ -91,8 +105,6 @@ const QuizPage = ({ params }: Props) => {
     return score;
   };
 
-  const getCorrectOptionText = (id: number) => {};
-
   const handleReset = () => {
     location.reload();
   };
@@ -103,19 +115,26 @@ const QuizPage = ({ params }: Props) => {
     setSubmitted(true);
     const res = await axios.post("/api/quiz/submitted", {
       topicId: params.id,
-      studentId: 37,
+      studentId: data?.user.id,
       score: (getCorrectAnswerCount() / quizAnswers.length) * 100,
     });
 
     if (res.data.status) {
       toast.success("Quiz Attempt Recorded");
+
+      const res = await axios.post("/api/notification", {
+        title: "Quiz Submitted",
+        description: `${data?.user.name} has submitted ${topic?.name} Quiz`,
+        to_teacher: 7,
+      });
     }
   };
 
   useEffect(() => {
     getTopic();
     getAllQuestions();
-  }, []);
+    getQuizAttempts();
+  }, [data?.user.id]);
 
   return (
     <Flex className="w-full h-full p-10">
@@ -133,7 +152,8 @@ const QuizPage = ({ params }: Props) => {
               <InfoCircledIcon />
             </Callout.Icon>
             <Callout.Text>
-              Please note that every attempt of this quiz is recorded.
+              Please note that every attempt of this quiz is recorded. You have
+              Attempted this Quiz {quizAttempts} times.
             </Callout.Text>
           </Callout.Root>
           {isSubmitted && (

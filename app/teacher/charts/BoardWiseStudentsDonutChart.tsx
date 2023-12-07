@@ -29,12 +29,9 @@ export default function DoughnutChart() {
         teacherId: 7,
       },
     });
-    console.log({ res });
+
     const labels = res.data.data.map((group: any) => group.board_name);
     const chartData = res.data.data.map((group: any) => group._count);
-
-    console.log({ labels });
-    console.log({ chartData });
 
     setData({
       labels: [...labels],
